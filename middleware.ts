@@ -10,17 +10,16 @@ export default async function middleware (request: NextRequest) {
   if (!accessToken || !refreshToken) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
-    return NextResponse.redirect(url)
+    NextResponse.redirect(url)
   }
 
-  const { isValid: isAccessTokenValid } = await verifyAccessTokenService({ accessToken })
+  const { isValid: isAccessTokenValid } = await verifyAccessTokenService({ accessToken: accessToken! })
 
-  console.log(isAccessTokenValid)
   if (isAccessTokenValid) {
-    return NextResponse.next()
+    NextResponse.next()
   }
 
-  const { isLoged, tokens } = await generateAccessTokenService({ refreshToken })
+  const { isLoged, tokens } = await generateAccessTokenService({ refreshToken: refreshToken! })
 
   if (isLoged) {
     request.cookies.set('accessToken', tokens.accessToken)
@@ -30,7 +29,7 @@ export default async function middleware (request: NextRequest) {
   }
 
   url.pathname = '/login'
-  return NextResponse.redirect(url)
+  NextResponse.redirect(url)
 }
 
 export const config = {
