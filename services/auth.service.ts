@@ -60,14 +60,12 @@ export async function generateAccessTokenService({ refreshToken }: { refreshToke
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorizaton': `Bearer ${refreshToken}`
+        'Authorization': `Bearer ${refreshToken}`
       },
       mode: 'cors'
     })
 
     const response = await responseString.json()
-
-    console.log(response)
 
     if (response.statusCode === 200) {
       return {
@@ -105,7 +103,7 @@ export async function verifyAccessTokenService({ accessToken }: { accessToken: s
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorizaton': `Bearer ${accessToken}`
+        'Authorization': `Bearer ${accessToken}`
       },
       mode: 'cors'
     })
