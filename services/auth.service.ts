@@ -6,7 +6,7 @@ export async function loginService({ email, password }: { email: string, passwor
   }
 }> {
   try {
-    const responseString = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/login`, {
+    const responseString = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
       body: JSON.stringify({
         email,
         password
@@ -14,12 +14,11 @@ export async function loginService({ email, password }: { email: string, passwor
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      mode: 'cors'
     })
 
     const response = await responseString.json()
-
-    console.log(response)
 
     if (response.statusCode === 200) {
       return {
@@ -57,12 +56,13 @@ export async function generateAccessTokenService({ refreshToken }: { refreshToke
   }
 }> {
   try {
-    const responseString = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/refresh-token`, {
+    const responseString = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh-token`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': `refreshToken=${refreshToken}`
-      }
+        'Authorizaton': `Bearer ${refreshToken}`
+      },
+      mode: 'cors'
     })
 
     const response = await responseString.json()
@@ -101,12 +101,13 @@ export async function verifyAccessTokenService({ accessToken }: { accessToken: s
   isValid: boolean
 }> {
   try {
-    const responseString = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/login-token`, {
+    const responseString = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': `accessToken=${accessToken}`
-      }
+        'Authorizaton': `Bearer ${accessToken}`
+      },
+      mode: 'cors'
     })
 
     const response = await responseString.json()
