@@ -35,6 +35,7 @@ export const config = {
     '/', 
     '/home',
     '/home/campaign', 
+    '/home/campaign/:path*', 
     '/home/farmer'
   ],
 }
