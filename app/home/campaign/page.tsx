@@ -2,7 +2,9 @@ import CampaignTable from "@/app/components/CampaignTable"
 
 export default async function Campaign () {
   const getUser = async (): Promise<any[]> => {
-    return []
+    return [{
+      id: 10
+    }]
   }
 
   const users = await getUser()

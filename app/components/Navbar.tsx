@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function Navbar () {
   const path = usePathname()
 
-  const [isCampaignSelected, setIsCampaignSelected] = useState(path === 'campaign')
+  const [isCampaignSelected, setIsCampaignSelected] = useState(true)
 
   const handlerClick = () => {
     setIsCampaignSelected(!isCampaignSelected)
