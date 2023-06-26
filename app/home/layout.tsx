@@ -1,12 +1,14 @@
-export default function RootLayout({
+import Navbar from "../components/Navbar"
+
+export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-      <div>
-        <p>Este es el layou de hhome</p>
-        {children}
-      </div>
+    <div className="min-h-full">
+      <Navbar />
+      {children}
+    </div>
   )
 }
