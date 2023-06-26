@@ -1,6 +1,6 @@
 'use client'
 
-export default function HomeLoading () {
+export default function CampaignError () {
 
   return (
     <>

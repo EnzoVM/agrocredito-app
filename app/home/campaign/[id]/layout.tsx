@@ -6,10 +6,10 @@ export default function CampaignDetailLayout ({
   children: React.ReactNode
 }) {
   return (
-    <div>
+    <div className="dark:bg-gray-900">
       <Sidebar />
       <div className="p-4 sm:ml-64 pt-20">
-        <div className="p-4 bg-white rounded">
+        <div className="p-4 rounded">
             {children}
         </div>
       </div>
