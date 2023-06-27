@@ -2,10 +2,15 @@
 
 import { Button, Modal } from "flowbite-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function CampaignTable() {
+  const [campaignList, setCampaignList] = useState([])
   const [isOpen, setOpen] = useState(false);
+
+  useEffect(() => {
+   
+  }, [])
 
   return (
     <div className="relative border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800 overflow-x-auto shadow-md sm:rounded-lg">
