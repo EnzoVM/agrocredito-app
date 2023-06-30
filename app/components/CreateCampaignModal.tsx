@@ -145,7 +145,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
                 <option value="">Elegir tipo</option>
                 {
                   campaignTypeList.map(campaignType => (
-                    <option value={campaignType.campaignTypeId}>{campaignType.campaignTypeDescription}</option>
+                    <option key={campaignType.campaignTypeId} value={campaignType.campaignTypeId}>{campaignType.campaignTypeDescription}</option>
                   ))
                 } 
               </select>
