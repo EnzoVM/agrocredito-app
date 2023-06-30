@@ -29,17 +29,18 @@ export default function Login() {
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    setAuthFailed(false)
-    setIsLoading(true)
     event.preventDefault()
+    setIsLoading(true)
+    setAuthFailed(false)
     const { isLoged, tokens } = await loginService(authCredentials)
     if (isLoged) {
       setCookie('refreshToken', tokens.refreshToken)
       setCookie('accessToken', tokens.accessToken)
       return router.push('/home/campaign')
+    } else {
+      setAuthFailed(true)
+      setIsLoading(false)
     }
-    setAuthFailed(!isLoged)
-    setIsLoading(false)
   }
 
   return (
