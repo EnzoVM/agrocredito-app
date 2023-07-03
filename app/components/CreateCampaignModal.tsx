@@ -165,7 +165,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
             </div>
             <div className="flex justify-between">
               <input
-                type="text"
+                type="number"
                 placeholder="dia" 
                 className="mr-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                 ref={startDayValue} 
@@ -173,7 +173,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
               />
               <p className="text-4xl"> / </p>
               <input
-                type="text"
+                type="number"
                 placeholder="mes" 
                 className="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                 ref={startMonthValue}
@@ -181,7 +181,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
               />
               <p className="text-5xl"> - </p>
               <input
-                type="text"
+                type="number"
                 placeholder="dia" 
                 className="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                 ref={finishDayValue} 
@@ -189,7 +189,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
               />
               <p className="text-4xl"> / </p>
               <input
-                type="text"
+                type="number"
                 placeholder="mes" 
                 className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                 ref={finishMonthValue} 
