@@ -15,7 +15,9 @@ export default function CampaignTable() {
     campaignDescription: string;
     campaignTypeDescription: string;
     periodName: string;
-    campaignYear: string
+    campaignYear: string,
+    startDate: string,
+    finishDate: string
   }[]>([])
 
   const [filters, setFilters] = useState<{
@@ -180,6 +182,12 @@ export default function CampaignTable() {
                 Periodo de campaña
               </th>
               <th scope="col" className="px-6 py-3">
+                Fecha inicial
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Fecha final
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Año de campaña
               </th>
               <th scope="col" className="px-6 py-3">
@@ -213,6 +221,8 @@ export default function CampaignTable() {
                       <td className="px-6 py-4">{response.campaignDescription}</td>
                       <td className="px-6 py-4">{response.campaignTypeDescription}</td>
                       <td className="px-6 py-4">{response.periodName}</td>
+                      <td className="px-6 py-4">{response.startDate}</td>
+                      <td className="px-6 py-4">{response.finishDate}</td>
                       <td className="px-6 py-4">{response.campaignYear}</td>
                       <td className="px-6 py-4">
                         <Link

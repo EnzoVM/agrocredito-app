@@ -12,7 +12,7 @@ export async function listCampaignService ({
   page: number, 
   limit: number, 
   typeSearch: 'code' | 'year' | 'all'
-}): Promise<{ campaignList: { campaignId: string, campaignDescription: string, campaignTypeDescription: string, periodName: string, campaignYear: string }[], count: number }> {
+}): Promise<{ campaignList: { campaignId: string, campaignDescription: string, campaignTypeDescription: string, periodName: string, campaignYear: string, startDate: string, finishDate:string }[], count: number }> {
 
   let accessToken = getCookie('accessToken') as string
   const refreshToken = getCookie('refreshToken') as string
@@ -20,7 +20,7 @@ export async function listCampaignService ({
   if(!accessToken || !refreshToken ){
     throw new Error('You have to login again')
   }
-
+  
   try {
     const statusAccessToken = await verifyAccessTokenService({accessToken})
 
