@@ -1,4 +1,4 @@
-import CampaignTable from "@/app/components/CampaignTable"
+import CampaignTable from "@/app/components/campaign/CampaignTable"
 
 export default function Campaign () {
 
