@@ -7,6 +7,7 @@ import CreateFarmerModal from "./CreateFarmerModal"
 import DeleteFarmerModal from "./DeleteFarmerModal"
 import FarmerTableSkeleton from "./FarmerTableSkeleton"
 import { listFarmerService } from "@/services/farmer.service"
+import { listProjectBySectorService } from "@/services/project.service"
 
 export default function FarmerTable() {
   const [farmers, setFarmers] = useState<{
@@ -45,6 +46,13 @@ export default function FarmerTable() {
   const [isLoadding, setIsLoadding] = useState(true)
   const [modalFormIsOpen, setModalFormIsOpen] = useState(false);
   const [modalDeleteCampaignIsOpen, setModalDeleteCampaignIsOpen] = useState(false);
+  const [projectList, setProjectList] = useState<{
+    projectId: string
+    projectDescription: string
+    projectSectorId: number
+    projectCode: number
+  }[]>([])
+  const [farmerIdSearch, setFarmerIdSearch] = useState('')
 
   const paginateUnSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
   const paginateSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-600 dark:border-gray-600 dark:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white'
@@ -67,6 +75,35 @@ export default function FarmerTable() {
       })
       .catch(error => console.log(error))
   }, [filters])
+
+  const changeProjectsBySectorHandler = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const sectorId = event.target.value
+    
+    if (sectorId === '') {
+      setFarmerIdSearch('')
+    }
+    const projectsFound = await listProjectBySectorService({ sectorId })
+    setProjectList(projectsFound)
+    setFarmerIdSearch(sectorId)
+    setFilters({ ...filters, farmerId: sectorId })
+  }
+
+  const handlerChangeSetProject = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const projectId = event.target.value
+    const getActualSector = farmerIdSearch.split('.')[0]
+    
+    if (projectId === '') {
+      setFarmerIdSearch(getActualSector)
+    }
+    setFarmerIdSearch(`${getActualSector}.${projectId}`)
+    setFilters({ ...filters, farmerId: `${getActualSector}.${projectId}` })
+  }
+
+  const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const farmerType = event.target.value as 'Individual' | 'Asociación'
+
+    setFilters({ ...filters, farmerType: farmerType })
+  }
 
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -164,15 +201,23 @@ export default function FarmerTable() {
           Crear agricultor
         </Button>
         <div className="flex justify-end pb-4">
-          <select name="campaignTypeId" className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+          <select name="campaignTypeId" onChange={handlerChangeFarmerType} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             <option value="Individual">Individual</option>
             <option value="Asociación">Asociación</option>
           </select>
-          <select name="campaignTypeId" className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+          <select name="campaignTypeId" onChange={changeProjectsBySectorHandler} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             <option value="">Elegir sector</option>
+            <option value="2">Margen derecha - 2</option>
+            <option value="3">Tumbes - 3</option>
+            <option value="4">Margen izquierda - 4</option>
           </select>
-          <select name="campaignTypeId" className="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+          <select name="campaignTypeId" onChange={handlerChangeSetProject} className="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             <option value="">Elegir proyecto</option>
+            {
+              projectList.map(project => (
+                <option value={project.projectCode} key={project.projectId}>{project.projectDescription} - {project.projectCode}</option>
+              ))
+            }
           </select>
         </div>
       </div>
@@ -227,10 +272,14 @@ export default function FarmerTable() {
                 Tipo
               </th>
               <th scope="col" className="px-6 py-3">
-                Nombre
+                {
+                  filters.farmerType === 'Individual' ? 'NOMBRES' : 'RAZÓN SOCIAL'
+                }
               </th>
               <th scope="col" className="px-6 py-3">
-                DNI
+                {
+                  filters.farmerType === 'Individual' ? 'DNI' : 'RUC'
+                }
               </th>
               <th scope="col" className="px-6 py-3">
                 Mas información
@@ -262,8 +311,8 @@ export default function FarmerTable() {
                       </th>
                       <td className="px-6 py-4">{farmer.farmerQualityDescription}</td>
                       <td className="px-6 py-4">{farmer.farmerType}</td>
-                      <td className="px-6 py-4">{farmer.fullNames}</td>
-                      <td className="px-6 py-4">{farmer.dni}</td>
+                      <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason}</td>
+                      <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.dni : farmer.ruc}</td>
                       <td className="px-6 py-4">
                         <Link
                           href={`/home/campaign/${farmer.farmerId}`}
