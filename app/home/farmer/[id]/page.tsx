@@ -105,32 +105,37 @@ export default function FarmerDetail ({ params }: { params: { id: string }}) {
         console.log(error.message)
       })
     }
-    const message = await updateFarmerService(dataToEdit)
-    console.log(message)
-    getFarmerDetailsService({ id: params.id })
-      .then(response => {
-        setFarmerDetail(response)
-        setDataToEdit({ ...dataToEdit, farmerId: response.farmerId })
-      })
-      .catch(error => {
-        setErrorMessage(error.message)
-      })
+    if (editable.editPersonalData === true) {
+      await updateFarmerService(dataToEdit)
+      getFarmerDetailsService({ id: params.id })
+        .then(response => {
+          setFarmerDetail(response)
+          setDataToEdit({ ...dataToEdit, farmerId: response.farmerId })
+        })
+        .catch(error => {
+          setErrorMessage(error.message)
+        })
+    }
+    
     setFarmerDetail({ ...farmerDetail, ...dataToEdit })
     setEditable({ ...editable, editPersonalData: !editable.editPersonalData})
   }
 
   const handleEditPropertyData = async () => {
-    const message = await updateFarmerService(dataToEdit)
-    console.log(message)
-    getFarmerDetailsService({ id: params.id })
-      .then(response => {
-        setFarmerDetail(response)
-        setDataToEdit({ ...dataToEdit, farmerId: response.farmerId })
-      })
-      .catch(error => {
-        setErrorMessage(error.message)
-      })
     setEditable({ ...editable, editPropertyData: !editable.editPropertyData})
+
+    if (editable.editPropertyData === true) {
+      await updateFarmerService(dataToEdit)
+
+      getFarmerDetailsService({ id: params.id })
+        .then(response => {
+          setFarmerDetail(response)
+          setDataToEdit({ ...dataToEdit, farmerId: response.farmerId })
+        })
+        .catch(error => {
+          setErrorMessage(error.message)
+        })
+    }
   }
 
   return (
