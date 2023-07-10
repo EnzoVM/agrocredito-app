@@ -1,31 +1,42 @@
-"use client";
+"use client"
 
-import CreateCampaignModal from "./CreateCampaignModal";
-import DeleteCampaignModal from "./DeleteCampaignModal";
-import CampaignTableSkeleton from "./CampaignTableSkeleton";
-import { Button } from "flowbite-react";
-import Link from "next/link";
-import { useEffect, useState, ChangeEvent, FormEvent} from "react";
-import { listCampaignService } from "@/services/campaign.service"
+import { useEffect, useState, ChangeEvent, FormEvent} from "react"
+import { Button } from "flowbite-react"
+import Link from "next/link"
+import CreateFarmerModal from "./CreateFarmerModal"
+import DeleteFarmerModal from "./DeleteFarmerModal"
+import FarmerTableSkeleton from "./FarmerTableSkeleton"
+import { listFarmerService } from "@/services/farmer.service"
+import { listProjectBySectorService } from "@/services/project.service"
 
-export default function CampaignTable() {
-
-  const [campaignList, setCampaignList] = useState<{
-    campaignId: string;
-    campaignDescription: string;
-    campaignTypeDescription: string;
-    periodName: string;
-    campaignYear: string,
-    startDate: string,
-    finishDate: string
+export default function FarmerTable() {
+  const [farmers, setFarmers] = useState<{
+    farmerId: string
+    farmerQualityDescription: string
+    farmerType: string
+    socialReason?: string
+    fullNames?: string
+    dni?: string
+    ruc?: string
   }[]>([])
 
   const [filters, setFilters] = useState<{
-    filter: string,
+    searchType: 'code' | 'name'
+    farmerId: string
+    farmerFullNames: string
+    farmerSocialReason: string
+    farmerType: 'Individual' | 'Asociación'
     page: number, 
-    limit: number,
-    typeSearch: 'code' | 'all' | 'year'
-  }>({filter: '', page: 1, limit: 8, typeSearch: 'all'})
+    limit: number
+  }>({
+    searchType: 'code',
+    farmerId: '',
+    farmerFullNames: '',
+    farmerSocialReason: '',
+    farmerType: 'Individual',
+    page: 1,
+    limit: 6
+  })
 
   const [campaingDeleted, setCampaingDeleted] = useState('')
   const [paginationSelected, setPaginationSelected] = useState(1)
@@ -35,42 +46,98 @@ export default function CampaignTable() {
   const [isLoadding, setIsLoadding] = useState(true)
   const [modalFormIsOpen, setModalFormIsOpen] = useState(false);
   const [modalDeleteCampaignIsOpen, setModalDeleteCampaignIsOpen] = useState(false);
+  const [projectList, setProjectList] = useState<{
+    projectId: string
+    projectDescription: string
+    projectSectorId: number
+    projectCode: number
+  }[]>([])
+  const [farmerIdSearch, setFarmerIdSearch] = useState('')
 
   const paginateUnSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
   const paginateSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-600 dark:border-gray-600 dark:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white'
 
   useEffect(() => {
     setIsLoadding(true)
-    listCampaignService({
-      filter: filters.filter, 
-      page: filters.page, 
-      limit: filters.limit, 
-      typeSearch: filters.typeSearch})
+    listFarmerService({
+      searchType: filters.searchType,
+      farmerId: filters.farmerId,
+      farmerFullNames: filters.farmerFullNames,
+      farmerSocialReason: filters.farmerSocialReason,
+      farmerType: filters.farmerType,
+      page: filters.page,
+      limit: filters.limit
+    })
       .then(response => {
-        setCampaignList(response.campaignList)
+        setFarmers(response.farmers)
         setTotalNumberOfCampaigns(response.count)
         setIsLoadding(false)
       })
       .catch(error => console.log(error))
   }, [filters])
 
+  const changeProjectsBySectorHandler = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const sectorId = event.target.value
+    
+    if (sectorId === '') {
+      setFarmerIdSearch('')
+    }
+    const projectsFound = await listProjectBySectorService({ sectorId: Number(sectorId) })
+    setProjectList(projectsFound)
+    setFarmerIdSearch(sectorId)
+    setFilters({ ...filters, farmerId: sectorId })
+  }
+
+  const handlerChangeSetProject = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const projectId = event.target.value
+    const getActualSector = farmerIdSearch.split('.')[0]
+    
+    if (projectId === '') {
+      setFarmerIdSearch(getActualSector)
+    }
+    setFarmerIdSearch(`${getActualSector}.${projectId}`)
+    setFilters({ ...filters, farmerId: `${getActualSector}.${projectId}` })
+  }
+
+  const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const farmerType = event.target.value as 'Individual' | 'Asociación'
+
+    setFilters({ ...filters, farmerType: farmerType })
+  }
+
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const firstChar = inputSearchFilter.charAt(0);
-    const startsWithNumber = !isNaN(parseInt(firstChar, 10));
-    const startsWithString = isNaN(parseInt(firstChar, 10))
-    
     if(inputSearchFilter === ''){
-      return setFilters({... filters, filter: inputSearchFilter, typeSearch: 'all', page: 1})
+      return setFilters({
+        searchType: 'code',
+        farmerId: '',
+        farmerFullNames: '',
+        farmerSocialReason: '',
+        farmerType: 'Individual',
+        page: 1,
+        limit: 8
+      })
+    }
+    
+    if(filters.farmerType === 'Individual'){
+      return setFilters({
+        ...filters, 
+        farmerFullNames: inputSearchFilter, 
+        farmerSocialReason: '', 
+        searchType: 'name', 
+        page: 1
+      })
     }
 
-    if(startsWithNumber){
-      setFilters({... filters, filter: inputSearchFilter, typeSearch: 'year', page: 1})
-    }
-
-    if(startsWithString){
-      setFilters({... filters, filter: inputSearchFilter, typeSearch: 'code', page: 1})
+    if(filters.farmerType === 'Asociación'){
+      return setFilters({
+        ...filters, 
+        farmerSocialReason: inputSearchFilter, 
+        farmerFullNames: '', 
+        searchType: 'name', 
+        page: 1
+      })
     }
   }
 
@@ -106,14 +173,14 @@ export default function CampaignTable() {
 
   return (
     <>
-      <CreateCampaignModal 
+      <CreateFarmerModal 
         modalFormIsOpen={modalFormIsOpen} 
         setModalFormIsOpen={setModalFormIsOpen}
         setFilters={setFilters} 
         setPaginationSelected={setPaginationSelected}
         setPaginationNumbers={setPaginationNumbers}
       />
-      <DeleteCampaignModal 
+      <DeleteFarmerModal 
         modalDeleteCampaignIsOpen={modalDeleteCampaignIsOpen} 
         setModalDeleteCampaignIsOpen={setModalDeleteCampaignIsOpen} 
         campaignId={campaingDeleted} 
@@ -121,15 +188,41 @@ export default function CampaignTable() {
         setPaginationSelected={setPaginationSelected}
         setPaginationNumbers={setPaginationNumbers}
       />
+      <div className="flex justify-end pb-2">
+        <p className="w-40 mr-4">Tipo:</p>
+        <p className="w-40 mr-4">Sector:</p>
+        <p className="w-40">Proyecto:</p>
+      </div>
+      <div className="flex justify-between">
+        <Button
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+          onClick={() => setModalFormIsOpen(true)}
+        >
+          Crear agricultor
+        </Button>
+        <div className="flex justify-end pb-4">
+          <select name="campaignTypeId" onChange={handlerChangeFarmerType} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+            <option value="Individual">Individual</option>
+            <option value="Asociación">Asociación</option>
+          </select>
+          <select name="campaignTypeId" onChange={changeProjectsBySectorHandler} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+            <option value="">Elegir sector</option>
+            <option value="2">Margen derecha - 2</option>
+            <option value="3">Tumbes - 3</option>
+            <option value="4">Margen izquierda - 4</option>
+          </select>
+          <select name="campaignTypeId" onChange={handlerChangeSetProject} className="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+            <option value="">Elegir proyecto</option>
+            {
+              projectList.map(project => (
+                <option value={project.projectCode} key={project.projectId}>{project.projectDescription} - {project.projectCode}</option>
+              ))
+            }
+          </select>
+        </div>
+      </div>
       <div className="relative border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800 overflow-x-auto shadow-md sm:rounded-lg">
-        <div className="flex justify-between p-4">
-          <Button
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-            onClick={() => setModalFormIsOpen(true)}
-          >
-            Crear campaña
-          </Button>
-        
+        <div className="flex justify-end p-4">
           <label className="sr-only">Buscar</label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -143,7 +236,7 @@ export default function CampaignTable() {
                 <path
                   fillRule="evenodd"
                   d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 ></path>
               </svg>
             </div>
@@ -152,12 +245,12 @@ export default function CampaignTable() {
                 <input
                   type="text"
                   id="table-search"
-                  className="mr-4 block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Buscar campaña por código o año"
+                  className="mr-4 block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-96 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Buscar agricultor por nombre o razón social"
                   onChange={handlerChange}
                 />
                 <Button
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
                   type="submit"
                 >
                   Buscar
@@ -173,25 +266,23 @@ export default function CampaignTable() {
                 Código
               </th>
               <th scope="col" className="px-6 py-3">
-                Descripción
+                Calidad
               </th>
               <th scope="col" className="px-6 py-3">
-                Tipo de campaña
+                Tipo
               </th>
               <th scope="col" className="px-6 py-3">
-                Periodo de campaña
+                {
+                  filters.farmerType === 'Individual' ? 'NOMBRES' : 'RAZÓN SOCIAL'
+                }
               </th>
               <th scope="col" className="px-6 py-3">
-                Fecha inicial
+                {
+                  filters.farmerType === 'Individual' ? 'DNI' : 'RUC'
+                }
               </th>
               <th scope="col" className="px-6 py-3">
-                Fecha final
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Año de campaña
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Ingresar
+                Mas información
               </th>
               <th scope="col" className="px-6 py-3">
                 Eliminar
@@ -202,7 +293,7 @@ export default function CampaignTable() {
             {
               isLoadding
               ?
-                <CampaignTableSkeleton></CampaignTableSkeleton>
+                <FarmerTableSkeleton />
               :
                 totalNumberOfCampaigns === 0
                 ?
@@ -210,30 +301,28 @@ export default function CampaignTable() {
                       No se encontraron resultados.
                   </div>
                 :
-                  campaignList.map(response => (
-                    <tr key={response.campaignId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  farmers.map(farmer => (
+                    <tr key={farmer.farmerId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
-                        {response.campaignId}
+                        {farmer.farmerId}
                       </th>
-                      <td className="px-6 py-4">{response.campaignDescription}</td>
-                      <td className="px-6 py-4">{response.campaignTypeDescription}</td>
-                      <td className="px-6 py-4">{response.periodName}</td>
-                      <td className="px-6 py-4">{response.startDate}</td>
-                      <td className="px-6 py-4">{response.finishDate}</td>
-                      <td className="px-6 py-4">{response.campaignYear}</td>
+                      <td className="px-6 py-4">{farmer.farmerQualityDescription}</td>
+                      <td className="px-6 py-4">{farmer.farmerType}</td>
+                      <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason}</td>
+                      <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.dni : farmer.ruc}</td>
                       <td className="px-6 py-4">
                         <Link
-                          href={`/home/campaign/${response.campaignId}`}
+                          href={`/home/farmer/${farmer.farmerId}`}
                           className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                          Ingresar
+                          Más información
                         </Link>
                       </td>
                       <td className="px-6 py-4">
-                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={() => {setModalDeleteCampaignIsOpen(true), setCampaingDeleted(response.campaignId)}}>
+                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={() => {setModalDeleteCampaignIsOpen(true), setCampaingDeleted(farmer.farmerId)}}>
                           Eliminar
                         </button>
                       </td>
@@ -273,7 +362,7 @@ export default function CampaignTable() {
                   <path
                     fillRule="evenodd"
                     d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                 </svg>
               </a>
@@ -313,7 +402,7 @@ export default function CampaignTable() {
                   <path
                     fillRule="evenodd"
                     d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                 </svg>
               </a>
