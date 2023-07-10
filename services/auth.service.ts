@@ -122,7 +122,6 @@ export async function verifyAccessTokenService({ accessToken }: { accessToken: s
       isValid: false
     }
   } catch (error: any) {
-    console.log(error)
     return {
       isValid: false
     }

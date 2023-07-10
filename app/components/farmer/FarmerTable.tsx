@@ -35,7 +35,7 @@ export default function FarmerTable() {
     farmerSocialReason: '',
     farmerType: 'Individual',
     page: 1,
-    limit: 8
+    limit: 6
   })
 
   const [campaingDeleted, setCampaingDeleted] = useState('')
@@ -82,7 +82,7 @@ export default function FarmerTable() {
     if (sectorId === '') {
       setFarmerIdSearch('')
     }
-    const projectsFound = await listProjectBySectorService({ sectorId })
+    const projectsFound = await listProjectBySectorService({ sectorId: Number(sectorId) })
     setProjectList(projectsFound)
     setFarmerIdSearch(sectorId)
     setFilters({ ...filters, farmerId: sectorId })
@@ -188,7 +188,7 @@ export default function FarmerTable() {
         setPaginationSelected={setPaginationSelected}
         setPaginationNumbers={setPaginationNumbers}
       />
-      <div className="flex justify-end">
+      <div className="flex justify-end pb-2">
         <p className="w-40 mr-4">Tipo:</p>
         <p className="w-40 mr-4">Sector:</p>
         <p className="w-40">Proyecto:</p>
@@ -236,7 +236,7 @@ export default function FarmerTable() {
                 <path
                   fillRule="evenodd"
                   d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 ></path>
               </svg>
             </div>
@@ -315,10 +315,10 @@ export default function FarmerTable() {
                       <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.dni : farmer.ruc}</td>
                       <td className="px-6 py-4">
                         <Link
-                          href={`/home/campaign/${farmer.farmerId}`}
+                          href={`/home/farmer/${farmer.farmerId}`}
                           className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
-                          Ingresar
+                          Más información
                         </Link>
                       </td>
                       <td className="px-6 py-4">
@@ -362,7 +362,7 @@ export default function FarmerTable() {
                   <path
                     fillRule="evenodd"
                     d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                 </svg>
               </a>
@@ -402,7 +402,7 @@ export default function FarmerTable() {
                   <path
                     fillRule="evenodd"
                     d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   ></path>
                 </svg>
               </a>

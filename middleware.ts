@@ -17,6 +17,7 @@ export const config = {
   matcher: [
     '/home/campaign', 
     '/home/campaign/:path*', 
-    '/home/farmer'
+    '/home/farmer',
+    '/home/farmer/:path*'
   ],
 }
