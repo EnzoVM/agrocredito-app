@@ -284,3 +284,29 @@ export async function updateFarmerService ({
     throw new Error(error.response.data.message)
   }
 }
+
+export async function deleteFarmerService ({ 
+  farmerId
+}: { 
+  farmerId: string
+}): Promise<string> {
+  try {
+
+    const { isLoged, accessToken } = await checkAuthorization()
+
+    if (!isLoged) {
+      throw new Error('You have to login again')
+    }
+
+    const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/farmers/${farmerId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    
+    return response.data.message
+
+  } catch (error: any) {
+    throw new Error(error.response.data.message)
+  }
+}

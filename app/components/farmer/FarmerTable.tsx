@@ -38,7 +38,7 @@ export default function FarmerTable() {
     limit: 6
   })
 
-  const [campaingDeleted, setCampaingDeleted] = useState('')
+  const [farmerDeleted, setFarmerDeleted] = useState('')
   const [paginationSelected, setPaginationSelected] = useState(1)
   const [paginationNumbers, setPaginationNumbers] = useState<number[]>([1,2,3,4,5])
   const [totalNumberOfCampaigns, setTotalNumberOfCampaigns] = useState(0)
@@ -183,7 +183,7 @@ export default function FarmerTable() {
       <DeleteFarmerModal 
         modalDeleteCampaignIsOpen={modalDeleteCampaignIsOpen} 
         setModalDeleteCampaignIsOpen={setModalDeleteCampaignIsOpen} 
-        campaignId={campaingDeleted} 
+        farmerId={farmerDeleted} 
         setFilters={setFilters} 
         setPaginationSelected={setPaginationSelected}
         setPaginationNumbers={setPaginationNumbers}
@@ -322,7 +322,7 @@ export default function FarmerTable() {
                         </Link>
                       </td>
                       <td className="px-6 py-4">
-                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={() => {setModalDeleteCampaignIsOpen(true), setCampaingDeleted(farmer.farmerId)}}>
+                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={() => {setModalDeleteCampaignIsOpen(true), setFarmerDeleted(farmer.farmerId)}}>
                           Eliminar
                         </button>
                       </td>
