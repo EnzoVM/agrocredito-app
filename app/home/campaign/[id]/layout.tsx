@@ -1,13 +1,15 @@
 import Sidebar from "@/app/components/Sidebar"
 
 export default function CampaignDetailLayout ({
-  children,
+  params,
+  children
 }: {
+  params: {id: string}
   children: React.ReactNode
 }) {
   return (
     <div className="dark:bg-gray-900">
-      <Sidebar />
+      <Sidebar campaignId={params}/>
       <div className="p-4 sm:ml-64 pt-20">
         <div className="p-4 rounded">
             {children}
