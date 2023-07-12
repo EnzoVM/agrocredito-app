@@ -151,7 +151,7 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
               }
             </div>
 
-            <div className="flex justify-between" style={{height: '356px'}}>
+            <div className="flex justify-between" style={{height: '364px'}}>
               {
                 listDepartureDetail.length===2
                 ? 

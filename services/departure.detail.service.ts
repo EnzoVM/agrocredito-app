@@ -1,8 +1,11 @@
 import axios from 'axios'
-import { verifyAccessTokenService, generateAccessTokenService } from './auth.service'
-import { setCookie, getCookie } from 'cookies-next'
+import { checkAuthorization } from './check.authorization.service'
 
-export async function listDepartureDetailService ({deliveryPlanModelId}:{deliveryPlanModelId: number}): Promise<{
+export async function listDepartureDetailService ({
+  deliveryPlanModelId
+}:{
+  deliveryPlanModelId: number
+}): Promise<{
   departureDetailId: number,
   deliveryPlanModelId: number,
   departureDetailDescription: string,
@@ -11,27 +14,11 @@ export async function listDepartureDetailService ({deliveryPlanModelId}:{deliver
   amountPerHectare: number
 }[]> {
 
-  let accessToken = getCookie('accessToken') as string
-  const refreshToken = getCookie('refreshToken') as string
-  
-  if(!accessToken || !refreshToken ){
-    throw new Error('You have to login again')
-  }
-
   try {
-    const statusAccessToken = await verifyAccessTokenService({accessToken})
+    const { isLoged, accessToken } = await checkAuthorization()
 
-    if(!statusAccessToken.isValid){
-      const newAccessToken = await generateAccessTokenService({refreshToken})
-
-      if(!newAccessToken.isLoged) {
-        throw new Error('You have to login again')
-      }else {
-        setCookie('accessToken', newAccessToken.tokens.accessToken)
-        setCookie('refreshToken', newAccessToken.tokens.refreshToken)
-
-        accessToken = newAccessToken.tokens.accessToken
-      }
+    if (!isLoged) {
+      throw new Error('You have to login again')
     }
 
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/departure-detail/list/${deliveryPlanModelId}`, {
@@ -43,12 +30,16 @@ export async function listDepartureDetailService ({deliveryPlanModelId}:{deliver
     return response.data.data
     
   } catch (error: any) {
-    throw new Error(error.message)
+    throw new Error(error.response.data.message)
   }
 }
 
 
-export async function deleteDepartureDetailService ({departureDetailId}:{departureDetailId: number}): Promise<{
+export async function deleteDepartureDetailService ({
+  departureDetailId
+}:{
+  departureDetailId: number
+}): Promise<{
   departureDetailId: number,
   deliveryPlanModelId: number,
   departureDetailDescription: string,
@@ -57,27 +48,11 @@ export async function deleteDepartureDetailService ({departureDetailId}:{departu
   amountPerHectare: number
 }> {
 
-  let accessToken = getCookie('accessToken') as string
-  const refreshToken = getCookie('refreshToken') as string
-  
-  if(!accessToken || !refreshToken ){
-    throw new Error('You have to login again')
-  }
-
   try {
-    const statusAccessToken = await verifyAccessTokenService({accessToken})
+    const { isLoged, accessToken } = await checkAuthorization()
 
-    if(!statusAccessToken.isValid){
-      const newAccessToken = await generateAccessTokenService({refreshToken})
-
-      if(!newAccessToken.isLoged) {
-        throw new Error('You have to login again')
-      }else {
-        setCookie('accessToken', newAccessToken.tokens.accessToken)
-        setCookie('refreshToken', newAccessToken.tokens.refreshToken)
-
-        accessToken = newAccessToken.tokens.accessToken
-      }
+    if (!isLoged) {
+      throw new Error('You have to login again')
     }
 
     const response = await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/departure-detail/${departureDetailId}`, {
@@ -89,7 +64,7 @@ export async function deleteDepartureDetailService ({departureDetailId}:{departu
     return response.data.data
     
   } catch (error: any) {
-    throw new Error(error.message)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -112,27 +87,11 @@ export async function createDepartureDetailService ({
   amountPerHectare: number
 }> {
 
-  let accessToken = getCookie('accessToken') as string
-  const refreshToken = getCookie('refreshToken') as string
-  
-  if(!accessToken || !refreshToken ){
-    throw new Error('You have to login again')
-  }
-
   try {
-    const statusAccessToken = await verifyAccessTokenService({accessToken})
+    const { isLoged, accessToken } = await checkAuthorization()
 
-    if(!statusAccessToken.isValid){
-      const newAccessToken = await generateAccessTokenService({refreshToken})
-
-      if(!newAccessToken.isLoged) {
-        throw new Error('You have to login again')
-      }else {
-        setCookie('accessToken', newAccessToken.tokens.accessToken)
-        setCookie('refreshToken', newAccessToken.tokens.refreshToken)
-
-        accessToken = newAccessToken.tokens.accessToken
-      }
+    if (!isLoged) {
+      throw new Error('You have to login again')
     }
 
     const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/departure-detail`, {

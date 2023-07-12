@@ -1,4 +1,4 @@
-import DeliveryPlanModelCard from "@/app/components/DeliveryPlanModelCards"
+import DeliveryPlanModelCard from "@/app/components/delivery-plan-model/DeliveryPlanModelCards"
 
 export default function CampaignDetail ({ params }: { params: { id: string }}) {
   return (
