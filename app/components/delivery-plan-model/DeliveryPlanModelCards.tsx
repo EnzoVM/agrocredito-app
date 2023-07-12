@@ -156,7 +156,7 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
                 listDepartureDetail.length===2
                 ? 
                   listDepartureDetail.map(departure => (
-                    <div className="mx-2 w-1/2">
+                    <div className="mx-2 w-1/2" key={departure.departureDetailId}>
                       <div className="grid border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 md:mb-1 md:grid-cols-2">
                         <div className="flex flex-col py-2 px-2 bg-white border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-tl-lg dark:bg-gray-800">
                           <h3 className="text-2xl py-1 px-2 font-semibold text-gray-900 dark:text-white">Partida</h3>
@@ -202,7 +202,7 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
                     <>
                       {
                         listDepartureDetail.map(departure => (
-                          <div className="mx-2 w-1/2">
+                          <div className="mx-2 w-1/2" key={departure.departureDetailId}>
                             <div className="grid border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 md:mb-1 md:grid-cols-2">
                               <div className="flex flex-col py-2 px-2 bg-white border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-tl-lg dark:bg-gray-800">
                                 <h3 className="text-2xl py-1 px-2 font-semibold text-gray-900 dark:text-white">Partida</h3>
