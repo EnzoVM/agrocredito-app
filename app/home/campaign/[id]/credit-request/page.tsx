@@ -17,7 +17,7 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       >
         {
         toggleCreate
-          ? 'Guardar solicitud de crédito'
+          ? 'Cancelar'
           : 'Crear solicitud de crédito'
         }
       </Button>
