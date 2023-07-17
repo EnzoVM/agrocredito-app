@@ -1,8 +1,6 @@
+export default function CreditRequestSkeleton() {
 
-
-export default function FamerTableSkeleton() {
-
-  const quantity = [1,2,3,4,5,6]
+  const quantity = [1,2,3,4,5,6,7,8]
 
   return (
     <>

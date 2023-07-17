@@ -35,7 +35,7 @@ export default function DeleteFarmerModal ({ modalDeleteCampaignIsOpen, setModal
         farmerSocialReason: '',
         farmerType: 'Individual',
         page: 1,
-        limit: 8
+        limit: 6
       })
       setPaginationSelected(1)
       setPaginationNumbers([1,2,3,4,5])
