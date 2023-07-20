@@ -1,6 +1,6 @@
 export default function CreditRequestSkeleton() {
 
-  const quantity = [1,2,3,4,5,6,7,8]
+  const quantity = [1,2,3,4,5,6]
 
   return (
     <>

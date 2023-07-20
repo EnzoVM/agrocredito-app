@@ -22,18 +22,18 @@ export default function CreditRequestTable() {
 
   const [filters, setFilters] = useState<{
     farmerType: 'Individual' | 'Asociación', 
-    creditRequestStatus?: 'Aprobado' | 'Pendiente' | 'Rechazado', 
+    creditRequestStatus?: 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado',
     farmerFullNames?: string, 
     farmerSocialReason?: string,
     page: number, 
     limit: number
   }>({
-    creditRequestStatus: 'Pendiente',
     farmerFullNames: '',
+    creditRequestStatus: undefined,
     farmerSocialReason: '',
     farmerType: 'Individual',
     page: 1,
-    limit: 10
+    limit: 6
   })
 
   const [paginationSelected, setPaginationSelected] = useState(1)
@@ -66,13 +66,22 @@ export default function CreditRequestTable() {
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
     const farmerType = event.target.value as 'Individual' | 'Asociación'
 
-    setFilters({ ...filters, farmerType: farmerType })
+    setFilters({ ...filters, farmerType: farmerType, page: 1 })
+    setPaginationSelected(1)
   }
 
   const handlerChangeCreditRequestStatus = async (event: ChangeEvent<HTMLSelectElement>) => {
-    const creditRequestStatus = event.target.value as 'Aprobado' | 'Pendiente' | 'Rechazado'
+    const creditRequestStatus = event.target.value as 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado'
+    console.log(filters)
+    // @ts-ignore
+    if (creditRequestStatus === '') {
+      setFilters({ ...filters, creditRequestStatus: undefined, page: 1 })
+      setPaginationSelected(1)
+      return
+    }
 
-    setFilters({ ...filters, creditRequestStatus })
+    setFilters({ ...filters, creditRequestStatus, page: 1 })
+    setPaginationSelected(1)
   }
 
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -80,12 +89,11 @@ export default function CreditRequestTable() {
 
     if(inputSearchFilter === ''){
       return setFilters({
-        creditRequestStatus: 'Pendiente',
         farmerFullNames: '',
         farmerSocialReason: '',
         farmerType: 'Individual',
         page: 1,
-        limit: 10
+        limit: 6
       })
     }
     
@@ -152,6 +160,7 @@ export default function CreditRequestTable() {
               <option value="Pendiente">Pendiente</option>
               <option value="Aprobado">Aprobado</option>
               <option value="Rechazado">Rechazado</option>
+              <option value="Pagado">Pagado</option>
             </select>
           </div>
           <label className="sr-only">Buscar</label>
@@ -193,27 +202,27 @@ export default function CreditRequestTable() {
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 CODIGO DE CAMPAÑA
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 {
                   filters.farmerType === 'Individual' ? 'NOMBRES' : 'RAZÓN SOCIAL'
                 }
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 MONTO DEL CREDITO
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 FECHA DE SOLICITUD
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 ESTADO DE SOLICITUD
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 Mas información
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 REPORTE
               </th>
             </tr>
@@ -234,31 +243,33 @@ export default function CreditRequestTable() {
                     <tr key={creditRequest.creditRequestId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       <th
                         scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center"
                       >
                         {creditRequest.campaignId}
                       </th>
-                      <td className="px-6 py-4">{creditRequest.fullNames ? creditRequest.fullNames : creditRequest.socialReason}</td>
-                      <td className="px-6 py-4">{creditRequest.creditAmount}</td>
-                      <td className="px-6 py-4">{moment(creditRequest.createDateTime).format('LLLL')}</td>
-                      <td className="px-6 py-4">{
+                      <td className="px-6 py-4 text-center">{creditRequest.fullNames ? creditRequest.fullNames : creditRequest.socialReason}</td>
+                      <td className="px-6 py-4 text-center">{creditRequest.creditAmount}</td>
+                      <td className="px-6 py-4 text-center">{moment(creditRequest.createDateTime).format('LLLL')}</td>
+                      <td className="px-6 py-4 text-center">{
                         creditRequest.creditRequestStatus === 'Pendiente' 
                           ? <span className="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Pendiente</span>
                           : creditRequest.creditRequestStatus === 'Aprobado'
                             ?  <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Aprobado</span>
-                            : <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Rechazado</span>
+                            : creditRequest.creditRequestStatus === 'Rechazado'
+                              ? <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Rechazado</span>
+                              : <span className="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Pagado</span>
                       }</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-center">
                         <Link
-                          href={`home/campaign/${creditRequest.campaignId}/credit-request/${creditRequest.creditRequestId}`}
+                          href={`credit-request/${creditRequest.creditRequestId}`}
                           className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
                           Más información
                         </Link>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-center">
                         <button className="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                          Generar Reporte
+                          Generar reporte
                         </button>
                       </td>
                     </tr>
