@@ -7,6 +7,7 @@ import CreditRequestTableSkeleton from "./CreditRequestTableSkeleton"
 import { listCreditRequestService } from "@/services/credit.request.service"
 import moment from 'moment'
 import 'moment/locale/es'
+import CreditRequestReportGenerator from "../CreditRequestReportGenerator"
 
 export default function CreditRequestTable() {
   const [creditRequests, setCreditRequests] = useState<{
@@ -268,9 +269,7 @@ export default function CreditRequestTable() {
                         </Link>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                          Generar reporte
-                        </button>
+                        <CreditRequestReportGenerator creditRequestId={creditRequest.creditRequestId} />
                       </td>
                     </tr>
                   ))
