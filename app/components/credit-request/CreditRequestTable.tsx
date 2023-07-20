@@ -3,106 +3,85 @@
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
 import Link from "next/link"
-import CreateFarmerModal from "./CreateFarmerModal"
-import DeleteFarmerModal from "./DeleteFarmerModal"
-import FarmerTableSkeleton from "./FarmerTableSkeleton"
-import { listFarmerService } from "@/services/farmer.service"
-import { listProjectBySectorService } from "@/services/project.service"
+import CreditRequestTableSkeleton from "./CreditRequestTableSkeleton"
+import { listCreditRequestService } from "@/services/credit.request.service"
+import moment from 'moment'
+import 'moment/locale/es'
 
-export default function FarmerTable() {
-  const [farmers, setFarmers] = useState<{
-    farmerId: string
-    farmerQualityDescription: string
-    farmerType: string
-    socialReason?: string
+export default function CreditRequestTable() {
+  const [creditRequests, setCreditRequests] = useState<{
+    creditRequestId: string
+    campaignId: string
     fullNames?: string
-    dni?: string
-    ruc?: string
+    socialReason?: string
+    creditAmount: number
+    createDateTime: Date
+    updateStatusDateTime?: Date
+    creditRequestStatus: string
   }[]>([])
 
   const [filters, setFilters] = useState<{
-    searchType: 'code' | 'name'
-    farmerId: string
-    farmerFullNames: string
-    farmerSocialReason: string
-    farmerType: 'Individual' | 'Asociación'
+    farmerType: 'Individual' | 'Asociación', 
+    creditRequestStatus?: 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado',
+    farmerFullNames?: string, 
+    farmerSocialReason?: string,
     page: number, 
     limit: number
   }>({
-    searchType: 'code',
-    farmerId: '',
     farmerFullNames: '',
+    creditRequestStatus: undefined,
     farmerSocialReason: '',
     farmerType: 'Individual',
     page: 1,
     limit: 6
   })
 
-  const [farmerDeleted, setFarmerDeleted] = useState('')
   const [paginationSelected, setPaginationSelected] = useState(1)
   const [paginationNumbers, setPaginationNumbers] = useState<number[]>([1,2,3,4,5])
-  const [totalNumberOfCampaigns, setTotalNumberOfCampaigns] = useState(0)
+  const [totalNumberOfCreditRequests, setTotalNumberOfCreditRequests] = useState(0)
   const [inputSearchFilter, setInputSearchFilter] = useState('')
   const [isLoadding, setIsLoadding] = useState(true)
-  const [modalFormIsOpen, setModalFormIsOpen] = useState(false);
-  const [modalDeleteCampaignIsOpen, setModalDeleteCampaignIsOpen] = useState(false);
-  const [projectList, setProjectList] = useState<{
-    projectId: string
-    projectDescription: string
-    projectSectorId: number
-    projectCode: number
-  }[]>([])
-  const [farmerIdSearch, setFarmerIdSearch] = useState('')
 
   const paginateUnSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
   const paginateSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-600 dark:border-gray-600 dark:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white'
 
   useEffect(() => {
     setIsLoadding(true)
-    listFarmerService({
-      searchType: filters.searchType,
-      farmerId: filters.farmerId,
+    listCreditRequestService({
+      farmerType: filters.farmerType,
+      creditRequestStatus: filters.creditRequestStatus,
       farmerFullNames: filters.farmerFullNames,
       farmerSocialReason: filters.farmerSocialReason,
-      farmerType: filters.farmerType,
       page: filters.page,
       limit: filters.limit
     })
       .then(response => {
-        setFarmers(response.farmers)
-        setTotalNumberOfCampaigns(response.count)
+        setCreditRequests(response.creditRequests)
+        setTotalNumberOfCreditRequests(response.count)
         setIsLoadding(false)
       })
       .catch(error => console.log(error))
   }, [filters])
 
-  const changeProjectsBySectorHandler = async (event: ChangeEvent<HTMLSelectElement>) => {
-    const sectorId = event.target.value
-    
-    if (sectorId === '') {
-      setFarmerIdSearch('')
-    }
-    const projectsFound = await listProjectBySectorService({ sectorId: Number(sectorId) })
-    setProjectList(projectsFound)
-    setFarmerIdSearch(sectorId)
-    setFilters({ ...filters, farmerId: sectorId })
-  }
-
-  const handlerChangeSetProject = async (event: ChangeEvent<HTMLSelectElement>) => {
-    const projectId = event.target.value
-    const getActualSector = farmerIdSearch.split('.')[0]
-    
-    if (projectId === '') {
-      setFarmerIdSearch(getActualSector)
-    }
-    setFarmerIdSearch(`${getActualSector}.${projectId}`)
-    setFilters({ ...filters, farmerId: `${getActualSector}.${projectId}` })
-  }
-
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
     const farmerType = event.target.value as 'Individual' | 'Asociación'
 
-    setFilters({ ...filters, farmerType: farmerType })
+    setFilters({ ...filters, farmerType: farmerType, page: 1 })
+    setPaginationSelected(1)
+  }
+
+  const handlerChangeCreditRequestStatus = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const creditRequestStatus = event.target.value as 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado'
+    console.log(filters)
+    // @ts-ignore
+    if (creditRequestStatus === '') {
+      setFilters({ ...filters, creditRequestStatus: undefined, page: 1 })
+      setPaginationSelected(1)
+      return
+    }
+
+    setFilters({ ...filters, creditRequestStatus, page: 1 })
+    setPaginationSelected(1)
   }
 
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -110,8 +89,6 @@ export default function FarmerTable() {
 
     if(inputSearchFilter === ''){
       return setFilters({
-        searchType: 'code',
-        farmerId: '',
         farmerFullNames: '',
         farmerSocialReason: '',
         farmerType: 'Individual',
@@ -124,8 +101,7 @@ export default function FarmerTable() {
       return setFilters({
         ...filters, 
         farmerFullNames: inputSearchFilter, 
-        farmerSocialReason: '', 
-        searchType: 'name', 
+        farmerSocialReason: '',
         page: 1
       })
     }
@@ -134,8 +110,7 @@ export default function FarmerTable() {
       return setFilters({
         ...filters, 
         farmerSocialReason: inputSearchFilter, 
-        farmerFullNames: '', 
-        searchType: 'name', 
+        farmerFullNames: '',
         page: 1
       })
     }
@@ -159,7 +134,7 @@ export default function FarmerTable() {
   }
 
   const goNextPage = () => {
-    if(filters.page >= Math.ceil(totalNumberOfCampaigns/filters.limit)){
+    if(filters.page >= Math.ceil(totalNumberOfCreditRequests/filters.limit)){
       setFilters({...filters}) 
     }else {
       setFilters({...filters, page: filters.page + 1})
@@ -173,56 +148,21 @@ export default function FarmerTable() {
 
   return (
     <>
-      <CreateFarmerModal 
-        modalFormIsOpen={modalFormIsOpen} 
-        setModalFormIsOpen={setModalFormIsOpen}
-        setFilters={setFilters} 
-        setPaginationSelected={setPaginationSelected}
-        setPaginationNumbers={setPaginationNumbers}
-      />
-      <DeleteFarmerModal 
-        modalDeleteCampaignIsOpen={modalDeleteCampaignIsOpen} 
-        setModalDeleteCampaignIsOpen={setModalDeleteCampaignIsOpen} 
-        farmerId={farmerDeleted} 
-        setFilters={setFilters} 
-        setPaginationSelected={setPaginationSelected}
-        setPaginationNumbers={setPaginationNumbers}
-      />
-      <div className="flex justify-end pb-2">
-        <p className="w-40 mr-4">Tipo:</p>
-        <p className="w-40 mr-4">Sector:</p>
-        <p className="w-40">Proyecto:</p>
-      </div>
-      <div className="flex justify-between">
-        <Button
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-          onClick={() => setModalFormIsOpen(true)}
-        >
-          Crear agricultor
-        </Button>
-        <div className="flex justify-end pb-4">
-          <select name="campaignTypeId" onChange={handlerChangeFarmerType} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-            <option value="Individual">Individual</option>
-            <option value="Asociación">Asociación</option>
-          </select>
-          <select name="campaignTypeId" onChange={changeProjectsBySectorHandler} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-            <option value="">Elegir sector</option>
-            <option value="2">Margen derecha - 2</option>
-            <option value="3">Tumbes - 3</option>
-            <option value="4">Margen izquierda - 4</option>
-          </select>
-          <select name="campaignTypeId" onChange={handlerChangeSetProject} className="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-            <option value="">Elegir proyecto</option>
-            {
-              projectList.map(project => (
-                <option value={project.projectCode} key={project.projectId}>{project.projectDescription} - {project.projectCode}</option>
-              ))
-            }
-          </select>
-        </div>
-      </div>
       <div className="relative border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800 overflow-x-auto shadow-md sm:rounded-lg">
         <div className="flex justify-end p-4">
+          <div className="flex justify-start w-full">
+            <select name="farmerType" onChange={handlerChangeFarmerType} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+              <option value="Individual">Individual</option>
+              <option value="Asociación">Asociación</option>
+            </select>
+            <select name="creditRequestStatus" onChange={handlerChangeCreditRequestStatus} className="w-50 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+              <option value="">Estado de solicitud </option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="Aprobado">Aprobado</option>
+              <option value="Rechazado">Rechazado</option>
+              <option value="Pagado">Pagado</option>
+            </select>
+          </div>
           <label className="sr-only">Buscar</label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -262,30 +202,28 @@ export default function FarmerTable() {
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                Código
+              <th scope="col" className="px-6 py-3 text-center">
+                CODIGO DE CAMPAÑA
               </th>
-              <th scope="col" className="px-6 py-3">
-                Calidad
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Tipo
-              </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
                 {
                   filters.farmerType === 'Individual' ? 'NOMBRES' : 'RAZÓN SOCIAL'
                 }
               </th>
-              <th scope="col" className="px-6 py-3">
-                {
-                  filters.farmerType === 'Individual' ? 'DNI' : 'RUC'
-                }
+              <th scope="col" className="px-6 py-3 text-center">
+                MONTO DEL CREDITO
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-center">
+                FECHA DE SOLICITUD
+              </th>
+              <th scope="col" className="px-6 py-3 text-center">
+                ESTADO DE SOLICITUD
+              </th>
+              <th scope="col" className="px-6 py-3 text-center">
                 Mas información
               </th>
-              <th scope="col" className="px-6 py-3">
-                Eliminar
+              <th scope="col" className="px-6 py-3 text-center">
+                REPORTE
               </th>
             </tr>
           </thead>
@@ -293,37 +231,45 @@ export default function FarmerTable() {
             {
               isLoadding
               ?
-                <FarmerTableSkeleton />
+                <CreditRequestTableSkeleton />
               :
-                totalNumberOfCampaigns === 0
+                totalNumberOfCreditRequests === 0
                 ?
                   <div className="text-center text-gray-600">
                       No se encontraron resultados.
                   </div>
                 :
-                  farmers.map(farmer => (
-                    <tr key={farmer.farmerId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  creditRequests.map(creditRequest => (
+                    <tr key={creditRequest.creditRequestId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       <th
                         scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center"
                       >
-                        {farmer.farmerId}
+                        {creditRequest.campaignId}
                       </th>
-                      <td className="px-6 py-4">{farmer.farmerQualityDescription}</td>
-                      <td className="px-6 py-4">{farmer.farmerType}</td>
-                      <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason}</td>
-                      <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.dni : farmer.ruc}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-center">{creditRequest.fullNames ? creditRequest.fullNames : creditRequest.socialReason}</td>
+                      <td className="px-6 py-4 text-center">{creditRequest.creditAmount}</td>
+                      <td className="px-6 py-4 text-center">{moment(creditRequest.createDateTime).format('LLLL')}</td>
+                      <td className="px-6 py-4 text-center">{
+                        creditRequest.creditRequestStatus === 'Pendiente' 
+                          ? <span className="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Pendiente</span>
+                          : creditRequest.creditRequestStatus === 'Aprobado'
+                            ?  <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Aprobado</span>
+                            : creditRequest.creditRequestStatus === 'Rechazado'
+                              ? <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Rechazado</span>
+                              : <span className="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Pagado</span>
+                      }</td>
+                      <td className="px-6 py-4 text-center">
                         <Link
-                          href={`/home/farmer/${farmer.farmerId}`}
+                          href={`credit-request/${creditRequest.creditRequestId}`}
                           className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         >
                           Más información
                         </Link>
                       </td>
-                      <td className="px-6 py-4">
-                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" onClick={() => {setModalDeleteCampaignIsOpen(true), setFarmerDeleted(farmer.farmerId)}}>
-                          Eliminar
+                      <td className="px-6 py-4 text-center">
+                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                          Generar reporte
                         </button>
                       </td>
                     </tr>
@@ -338,11 +284,11 @@ export default function FarmerTable() {
           <span className="text-sm m-4 font-normal text-gray-500 dark:text-gray-400">
             Mostrando{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
-              {totalNumberOfCampaigns === 0 ? 0 : filters.page*filters.limit-filters.limit+1} - {totalNumberOfCampaigns<filters.limit ? totalNumberOfCampaigns : filters.page*filters.limit<totalNumberOfCampaigns ? filters.page*filters.limit : totalNumberOfCampaigns }
+              {totalNumberOfCreditRequests === 0 ? 0 : filters.page*filters.limit-filters.limit+1} - {totalNumberOfCreditRequests<filters.limit ? totalNumberOfCreditRequests : filters.page*filters.limit<totalNumberOfCreditRequests ? filters.page*filters.limit : totalNumberOfCreditRequests }
             </span>{" "}
             de{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
-              {totalNumberOfCampaigns}
+              {totalNumberOfCreditRequests}
             </span>
           </span>
           <ul className="inline-flex m-4 items-center -space-x-px">
@@ -373,7 +319,7 @@ export default function FarmerTable() {
                   <a
                     className={paginationSelected === page ? paginateSelectedStyle : paginateUnSelectedStyle}
                     onClick={() => {
-                      if(page>Math.ceil(totalNumberOfCampaigns/filters.limit)) {
+                      if(page>Math.ceil(totalNumberOfCreditRequests/filters.limit)) {
                         setFilters({...filters})
                       }else {
                         setFilters({...filters, page})
@@ -381,7 +327,7 @@ export default function FarmerTable() {
                       } 
                     }}
                   >
-                    {page>Math.ceil(totalNumberOfCampaigns/filters.limit) ? '' : page}
+                    {page>Math.ceil(totalNumberOfCreditRequests/filters.limit) ? '' : page}
                   </a>
                 </li>
               ))

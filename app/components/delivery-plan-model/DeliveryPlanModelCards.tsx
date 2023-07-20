@@ -138,11 +138,11 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
                     <div className="grid border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 md:grid-cols-1">
                       <div className="flex flex-col py-2 px-2 bg-white border-b border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-tl-lg md:border-r dark:bg-gray-800 dark:border-gray-700">
                         <div className="mb-3 px-2">
-                          <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Campaña</h5>
+                          <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Campaña:</h5>
                           <p className="font-normal text-gray-700 dark:text-gray-400">{deliveryPlanModel.campaignId}</p>
                         </div>
                         <div className="mb-3 px-2">
-                          <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Descripcion</h5>
+                          <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Descripcion:</h5>
                           <p className="font-normal text-gray-700 dark:text-gray-400">{deliveryPlanModel.deliveryPlanModelDescription}</p>
                         </div>
                       </div>
@@ -177,19 +177,19 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
                       <div className="grid border border-gray-200 rounded-lg shadow-sm dark:border-gray-700">
                         <div className="flex flex-col py-1 px-2 bg-white border-b border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-tl-lg md:border-r dark:bg-gray-800 dark:border-gray-700">
                           <div className="mb-3 px-2">
-                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Descripcion de partida</h5>
+                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Descripcion de partida:</h5>
                             <p className="font-normal text-gray-700 dark:text-gray-400">{departure.departureDetailDescription}</p>
                           </div>
                           <div className="mb-3 px-2">
-                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Tipo de partida</h5>
+                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Tipo de partida:</h5>
                             <p className="font-normal text-gray-700 dark:text-gray-400">{departure.departureType}</p>
                           </div>
                           <div className="mb-3 px-2">
-                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Recurso</h5>
+                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Recurso:</h5>
                             <p className="font-normal text-gray-700 dark:text-gray-400">{departure.resource}</p>
                           </div>
                           <div className="mb-3 px-2">
-                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Monto x hectarea</h5>
+                            <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Monto x hectarea:</h5>
                             <p className="font-normal text-gray-700 dark:text-gray-400">S/. {departure.amountPerHectare}</p>
                           </div>
                         </div>
@@ -223,19 +223,19 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
                             <div className="grid border border-gray-200 rounded-lg shadow-sm dark:border-gray-700">
                               <div className="flex flex-col py-1 px-2 bg-white border-b border-gray-200 rounded-t-lg md:rounded-t-none md:rounded-tl-lg md:border-r dark:bg-gray-800 dark:border-gray-700">
                                 <div className="mb-3 px-2">
-                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Descripcion de partida</h5>
+                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Descripcion de partida:</h5>
                                   <p className="font-normal text-gray-700 dark:text-gray-400">{departure.departureDetailDescription}</p>
                                 </div>
                                 <div className="mb-3 px-2">
-                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Tipo de partida</h5>
+                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Tipo de partida:</h5>
                                   <p className="font-normal text-gray-700 dark:text-gray-400">{departure.departureType}</p>
                                 </div>
                                 <div className="mb-3 px-2">
-                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Recurso</h5>
+                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Recurso:</h5>
                                   <p className="font-normal text-gray-700 dark:text-gray-400">{departure.resource}</p>
                                 </div>
                                 <div className="mb-3 px-2">
-                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Monto x hectarea</h5>
+                                  <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Monto x hectarea:</h5>
                                   <p className="font-normal text-gray-700 dark:text-gray-400">S/. {departure.amountPerHectare}</p>
                                 </div>
                               </div>
