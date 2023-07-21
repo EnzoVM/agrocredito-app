@@ -1,5 +1,6 @@
 'use client'
 
+import CreditRequestGeneralReportGenerator from "@/app/components/credit-request/CreditRequestGeneralReportGenerator";
 import CreditRequestTable from "@/app/components/credit-request/CreditRequestTable";
 import { Button } from "flowbite-react";
 import { useState } from "react";
@@ -21,10 +22,11 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
           : 'Crear solicitud de crédito'
         }
       </Button>
+      <CreditRequestGeneralReportGenerator campaignId={params.id} />
       {
         toggleCreate
           ? <></> 
-          : <CreditRequestTable />
+          : <CreditRequestTable campaignId={params.id} />
       }
     </div>
   )

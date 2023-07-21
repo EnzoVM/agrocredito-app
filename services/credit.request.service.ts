@@ -2,6 +2,7 @@ import axios from 'axios'
 import { checkAuthorization } from './check.authorization.service'
 
 export async function listCreditRequestService ({ 
+  campaignId,
   farmerType,
   creditRequestStatus,
   farmerFullNames,
@@ -9,7 +10,8 @@ export async function listCreditRequestService ({
   page,
   limit
 }: {
-  farmerType: 'Individual' | 'Asociación', 
+  campaignId: string,
+  farmerType: 'Individual' | 'Asociación' | 'All', 
   creditRequestStatus?: 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado', 
   farmerFullNames?: string, 
   farmerSocialReason?: string,
@@ -40,6 +42,7 @@ export async function listCreditRequestService ({
 
     if (typeof creditRequestStatus === 'undefined') {
       jsonFilter = JSON.stringify({
+        campaignId,
         farmerType,
         farmerFullNames,
         farmerSocialReason,
@@ -48,6 +51,7 @@ export async function listCreditRequestService ({
       })
     } else {
       jsonFilter = JSON.stringify({
+        campaignId,
         farmerType,
         creditRequestStatus,
         farmerFullNames,

@@ -60,7 +60,7 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
       setErrorMessage(error.message)
       setIsLoadding(false)
     })
-  }, [])
+  }, [campaignId])
 
   return (
     <>

@@ -7,8 +7,9 @@ import CreditRequestTableSkeleton from "./CreditRequestTableSkeleton"
 import { listCreditRequestService } from "@/services/credit.request.service"
 import moment from 'moment'
 import 'moment/locale/es'
+import CreditRequestReportGenerator from "./CreditRequestReportGenerator"
 
-export default function CreditRequestTable() {
+export default function CreditRequestTable({ campaignId }: { campaignId: string }) {
   const [creditRequests, setCreditRequests] = useState<{
     creditRequestId: string
     campaignId: string
@@ -21,6 +22,7 @@ export default function CreditRequestTable() {
   }[]>([])
 
   const [filters, setFilters] = useState<{
+    campaignId: string,
     farmerType: 'Individual' | 'Asociación', 
     creditRequestStatus?: 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado',
     farmerFullNames?: string, 
@@ -28,6 +30,7 @@ export default function CreditRequestTable() {
     page: number, 
     limit: number
   }>({
+    campaignId: '',
     farmerFullNames: '',
     creditRequestStatus: undefined,
     farmerSocialReason: '',
@@ -48,6 +51,7 @@ export default function CreditRequestTable() {
   useEffect(() => {
     setIsLoadding(true)
     listCreditRequestService({
+      campaignId,
       farmerType: filters.farmerType,
       creditRequestStatus: filters.creditRequestStatus,
       farmerFullNames: filters.farmerFullNames,
@@ -61,7 +65,7 @@ export default function CreditRequestTable() {
         setIsLoadding(false)
       })
       .catch(error => console.log(error))
-  }, [filters])
+  }, [campaignId, filters])
 
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
     const farmerType = event.target.value as 'Individual' | 'Asociación'
@@ -89,6 +93,7 @@ export default function CreditRequestTable() {
 
     if(inputSearchFilter === ''){
       return setFilters({
+        ...filters,
         farmerFullNames: '',
         farmerSocialReason: '',
         farmerType: 'Individual',
@@ -268,9 +273,7 @@ export default function CreditRequestTable() {
                         </Link>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <button className="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                          Generar reporte
-                        </button>
+                        <CreditRequestReportGenerator creditRequestId={creditRequest.creditRequestId} />
                       </td>
                     </tr>
                   ))
