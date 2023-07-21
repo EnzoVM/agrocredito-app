@@ -4,11 +4,13 @@ import 'moment/locale/es'
 
 const styles = StyleSheet.create({
   body: {
-    margin: 35
+    paddingTop: 35,
+    paddingBottom: 65,
+    paddingHorizontal: 35,
   },
   text: {
-    marginBottom: 20,
-    marginLeft: 130,
+    textAlign: "center",
+    marginBottom: 20
   },
   textLogo: {
     marginBottom: 20,
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 0, 
     borderBottomWidth: 0,
     marginLeft: "30px",
-    marginRight: "90px",
+    marginRight: "30px",
   }, 
   tableRow: {
     flexDirection: "row" 
@@ -42,7 +44,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 5, 
     fontSize: 12
-  }
+  },
+  pageNumber: {
+    position: 'absolute',
+    fontSize: 12,
+    bottom: 40,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    color: 'grey',
+  },
 });
 
 export default function CreditRequestDocument ({ creditRequestData }: { creditRequestData: {
@@ -167,6 +178,9 @@ export default function CreditRequestDocument ({ creditRequestData }: { creditRe
             </View>
           </View>
         </View>
+        <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
+          `${pageNumber} / ${totalPages}`
+        )} fixed />
       </Page>
     </Document>
   )
