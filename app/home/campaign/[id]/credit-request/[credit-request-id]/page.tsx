@@ -146,7 +146,7 @@ export default function CreditRequestDetail ({ params }: { params: { 'credit-req
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.technicalName}</p>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Observaciones:</p>
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.creditRequestObservation}</p>
-                  <p className="text-md tracking-tight text-gray-900 dark:text-white">Fecha de solocitud del crédito:</p>
+                  <p className="text-md tracking-tight text-gray-900 dark:text-white">Fecha de solicitud del crédito:</p>
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{moment(creditRequestDetail.createDateTime).format('LLLL')}</p>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Fecha de modificación del estado de la solicitud:</p>
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.updateStatusDateTime ? moment(creditRequestDetail.updateStatusDateTime).format('LLLL') : 'Sin modificaciones'}</p>
