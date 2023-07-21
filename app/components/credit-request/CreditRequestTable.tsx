@@ -9,7 +9,7 @@ import moment from 'moment'
 import 'moment/locale/es'
 import CreditRequestReportGenerator from "./CreditRequestReportGenerator"
 
-export default function CreditRequestTable() {
+export default function CreditRequestTable({ campaignId }: { campaignId: string }) {
   const [creditRequests, setCreditRequests] = useState<{
     creditRequestId: string
     campaignId: string
@@ -22,6 +22,7 @@ export default function CreditRequestTable() {
   }[]>([])
 
   const [filters, setFilters] = useState<{
+    campaignId: string,
     farmerType: 'Individual' | 'Asociación', 
     creditRequestStatus?: 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado',
     farmerFullNames?: string, 
@@ -29,6 +30,7 @@ export default function CreditRequestTable() {
     page: number, 
     limit: number
   }>({
+    campaignId: '',
     farmerFullNames: '',
     creditRequestStatus: undefined,
     farmerSocialReason: '',
@@ -49,6 +51,7 @@ export default function CreditRequestTable() {
   useEffect(() => {
     setIsLoadding(true)
     listCreditRequestService({
+      campaignId,
       farmerType: filters.farmerType,
       creditRequestStatus: filters.creditRequestStatus,
       farmerFullNames: filters.farmerFullNames,
@@ -62,7 +65,7 @@ export default function CreditRequestTable() {
         setIsLoadding(false)
       })
       .catch(error => console.log(error))
-  }, [filters])
+  }, [campaignId, filters])
 
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
     const farmerType = event.target.value as 'Individual' | 'Asociación'
@@ -90,6 +93,7 @@ export default function CreditRequestTable() {
 
     if(inputSearchFilter === ''){
       return setFilters({
+        ...filters,
         farmerFullNames: '',
         farmerSocialReason: '',
         farmerType: 'Individual',

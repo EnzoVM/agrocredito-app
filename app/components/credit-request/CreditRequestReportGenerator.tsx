@@ -49,7 +49,7 @@ export default function CreditRequestReportGenerator ({ creditRequestId }: { cre
     .catch(error => {
       console.log(error)
     })
-  }, [])
+  }, [creditRequestId])
 
   return (
     <PDFDownloadLink document={<CreditRequestDocument creditRequestData={creditRequestDetail} />} fileName={`${creditRequestDetail.farmerId}_${creditRequestDetail.farmerFullNames?.split(' ').join('_') || creditRequestDetail.farmerSocialReason?.split(' ').join('_')}_${creditRequestDetail.createDateTime}_${creditRequestDetail.creditRequestId}.pdf`} >

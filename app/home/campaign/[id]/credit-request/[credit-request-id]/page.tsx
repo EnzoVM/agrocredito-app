@@ -1,6 +1,5 @@
 'use client'
 
-import CreditRequestTable from "@/app/components/credit-request/CreditRequestTable"
 import { getCreditRequestService, updateCreditRequestStatusService } from "@/services/credit.request.service"
 import { ChangeEvent, useEffect, useState } from "react"
 import moment from 'moment'
@@ -55,7 +54,7 @@ export default function CreditRequestDetail ({ params }: { params: { 'credit-req
       .catch(error => {
         console.log(error)
       })
-  }, [])
+  }, [params])
 
   const handleChangeCreditRequestStatus = (event: ChangeEvent<HTMLSelectElement>) => {
     const creditRequestStateGot = event.target.value
@@ -155,7 +154,6 @@ export default function CreditRequestDetail ({ params }: { params: { 'credit-req
                   <div className="flex justify-between mb-4">
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Estado de cuenta del crédito:</h5>
                   </div>
-                  <CreditRequestTable />
                 </div>
               </div>
             </div>

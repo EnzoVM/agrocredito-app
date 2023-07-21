@@ -74,7 +74,7 @@ export default function FarmerDetail ({ params }: { params: { id: string }}) {
       .catch(error => {
         setErrorMessage(error.message)
       })
-  }, [])
+  }, [params])
 
   const handlerChangeSetProject = (event: ChangeEvent<HTMLSelectElement>) => {
     const projectId = event.target.value
@@ -188,7 +188,7 @@ export default function FarmerDetail ({ params }: { params: { id: string }}) {
                             <option value="">Elegir distrito</option>
                             {
                               projectList.map(project => (
-                                <option value={project.projectCode} key={project.projectId}>{project.projectCode} - {project.projectDescription}</option>
+                                <option value={project.projectId} key={project.projectId}>{project.projectDescription}</option>
                               ))
                             }
                           </select>
