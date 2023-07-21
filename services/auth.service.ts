@@ -110,8 +110,6 @@ export async function verifyAccessTokenService({ accessToken }: { accessToken: s
 
     const response = await responseString.json()
 
-    console.log(response)
-
     if (response.statusCode === 200) {
       return {
         isValid: true

@@ -52,7 +52,7 @@ export default function CreditRequestReportGenerator ({ creditRequestId }: { cre
   }, [])
 
   return (
-    <PDFDownloadLink document={<CreditRequestDocument creditRequestData={creditRequestDetail} />} fileName={creditRequestId} >
+    <PDFDownloadLink document={<CreditRequestDocument creditRequestData={creditRequestDetail} />} fileName={`${creditRequestDetail.farmerId}_${creditRequestDetail.farmerFullNames?.split(' ').join('_') || creditRequestDetail.farmerSocialReason?.split(' ').join('_')}_${creditRequestDetail.createDateTime}_${creditRequestDetail.creditRequestId}.pdf`} >
       <button className="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
         Generar reporte
       </button>

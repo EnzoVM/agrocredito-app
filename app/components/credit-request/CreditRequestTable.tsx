@@ -7,7 +7,7 @@ import CreditRequestTableSkeleton from "./CreditRequestTableSkeleton"
 import { listCreditRequestService } from "@/services/credit.request.service"
 import moment from 'moment'
 import 'moment/locale/es'
-import CreditRequestReportGenerator from "../CreditRequestReportGenerator"
+import CreditRequestReportGenerator from "./CreditRequestReportGenerator"
 
 export default function CreditRequestTable() {
   const [creditRequests, setCreditRequests] = useState<{
