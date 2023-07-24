@@ -26,7 +26,7 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
         setErrorMessage(error.message)
       })
   }, [])
-
+  
   return (
     <div className="mx-auto sm:px-6 lg:px-8">
       <ErrorMessageModal
@@ -35,20 +35,26 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       errorMessage={errorMessage}
       />
       <p className="text-2xl font-bold text-gray-100 p-6 text-center">{toggleCreate ? 'Crear una solicitud de credito para la campaña: ': 'Solicitudes de crédito para la campaña: '}{params.id}</p>
-      <Button
-        className="text-white mb-6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-        onClick={() => {
-          setToggleCreate(!toggleCreate)
-          if(errorMessage !== '') {setModalErrorMessageIsOpen(true), setToggleCreate(false)} 
-        }}
-      >
+      <div className="flex flex-row">
+        <Button
+          className="text-white mb-6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+          onClick={() => {
+            setToggleCreate(!toggleCreate)
+            if(errorMessage !== '') {setModalErrorMessageIsOpen(true), setToggleCreate(false)} 
+          }}
+        >
+          {
+            toggleCreate
+              ? 'Cancelar'
+              : 'Crear solicitud de crédito'
+          }
+        </Button>
         {
-        toggleCreate
-          ? 'Cancelar'
-          : 'Crear solicitud de crédito'
+          toggleCreate
+            ? <></>
+            : <CreditRequestGeneralReportGenerator campaignId={params.id} />
         }
-      </Button>
-      <CreditRequestGeneralReportGenerator campaignId={params.id} />
+      </div>
       {
         toggleCreate
           ? <CreateCreditRequest campaignId={params.id} setToggleCreate={setToggleCreate}/>   
