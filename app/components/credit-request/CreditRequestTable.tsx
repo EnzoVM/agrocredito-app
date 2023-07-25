@@ -60,6 +60,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
       limit: filters.limit
     })
       .then(response => {
+        console.log(response.creditRequests)
         setCreditRequests(response.creditRequests)
         setTotalNumberOfCreditRequests(response.count)
         setIsLoadding(false)
@@ -70,7 +71,8 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
     const farmerType = event.target.value as 'Individual' | 'Asociación'
 
-    setFilters({ ...filters, farmerType: farmerType, page: 1 })
+    setFilters({ ...filters, farmerType: farmerType, page: 1, campaignId })
+    console.log(filters)
     setPaginationSelected(1)
   }
 

@@ -67,7 +67,7 @@ export default function CreditRequestGeneralReportGenerator ({ campaignId }: { c
     <>
       {
         finishLoadPDFData
-          ? <PDFDownloadLink onClick={getMinutesAndRegisterNewLog} document={<CreditRequestGeneralDocument creditRequests={creditRequestsReport} />} fileName={`${campaignId}.pdf`} >
+          ? <PDFDownloadLink onClick={getMinutesAndRegisterNewLog} document={<CreditRequestGeneralDocument creditRequests={creditRequestsReport} campaignId={campaignId}/>} fileName={`${campaignId}.pdf`} >
               <Button
                 className="text-white mb-6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
               >
