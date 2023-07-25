@@ -12,6 +12,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20
   },
+  textNotFound: {
+    textAlign: "center",
+    fontSize: 14,
+    marginTop: 50
+  },
   textLogo: {
     marginBottom: 20,
     fontSize: 14
@@ -56,63 +61,71 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function CreditRequestGenenalDocument ({ creditRequests }: { creditRequests: {
-  creditRequestId: string
+export default function CreditRequestGenenalDocument ({ creditRequests, campaignId }: { creditRequests: {
+    creditRequestId: string
+    campaignId: string
+    fullNames?: string
+    socialReason?: string
+    creditAmount: number
+    createDateTime: Date
+    updateStatusDateTime?: Date
+    creditRequestStatus: string
+  }[], 
   campaignId: string
-  fullNames?: string
-  socialReason?: string
-  creditAmount: number
-  createDateTime: Date
-  updateStatusDateTime?: Date
-  creditRequestStatus: string
-}[] }) {
+}) {
 
   return (
     <Document>
     <Page style={styles.body}>
       <Text style={styles.textLogo}>AgroCredito PEBPT</Text>
       <Text style={styles.text}>Reporte de la solicitud de crédito</Text>
-      <Text style={styles.textSecondary}>Las solicitudes de crédito mostradas en el presente reporte son las que poseen como estado pendiente de aprobación para la campaña ARR012023.</Text>
-      <View style={styles.table}>
-        <View style={styles.tableRow}>
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Código de la campaña</Text>
-          </View> 
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Nombres / Razón social:</Text>
-          </View> 
-          <View style={styles.tableCol}> 
-            <Text style={styles.tableCell}>Monto del crédito</Text> 
-          </View>
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Fecha de la solicitud:</Text>
-          </View> 
-          <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>Estado de la solicitud:</Text>
-          </View>
-        </View>
-        {
-          creditRequests.map(creditRequest => (
-            <View key={creditRequest.creditRequestId} style={styles.tableRow}> 
-              <View style={styles.tableCol}> 
-                <Text style={styles.tableCell}>{creditRequest.campaignId}</Text> 
-              </View> 
-              <View style={styles.tableCol}> 
-                <Text style={styles.tableCell}>{creditRequest.fullNames || creditRequest.socialReason}</Text> 
+      <Text style={styles.textSecondary}>Las solicitudes de crédito mostradas en el presente reporte son las que poseen como estado pendiente de aprobación para la campaña {campaignId}.</Text>
+      
+      {
+        creditRequests.length === 0
+          ? <Text style={styles.textNotFound}>No existen solicitudes de crédito pendientes para la campaña {campaignId}</Text>
+          : <View style={styles.table}>
+              <View style={styles.tableRow}>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Código de la campaña</Text>
+                </View> 
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Nombres / Razón social:</Text>
+                </View> 
+                <View style={styles.tableCol}> 
+                  <Text style={styles.tableCell}>Monto del crédito</Text> 
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Fecha de la solicitud:</Text>
+                </View> 
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Estado de la solicitud:</Text>
+                </View>
               </View>
-              <View style={styles.tableCol}> 
-                <Text style={styles.tableCell}>{creditRequest.creditAmount}</Text> 
-              </View>
-              <View style={styles.tableCol}> 
-                <Text style={styles.tableCell}>{moment(creditRequest.createDateTime).format('LLLL')}</Text> 
-              </View>
-              <View style={styles.tableCol}> 
-                <Text style={styles.tableCell}>{creditRequest.creditRequestStatus}</Text> 
-              </View>
+              {
+                creditRequests.map(creditRequest => (
+                  <View key={creditRequest.creditRequestId} style={styles.tableRow}> 
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{creditRequest.campaignId}</Text> 
+                    </View> 
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{creditRequest.fullNames || creditRequest.socialReason}</Text> 
+                    </View>
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{creditRequest.creditAmount}</Text> 
+                    </View>
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{moment(creditRequest.createDateTime).format('LLLL')}</Text> 
+                    </View>
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{creditRequest.creditRequestStatus}</Text> 
+                    </View>
+                  </View>
+                ))
+              }
             </View>
-          ))
-        }
-      </View>
+      }
+      
       <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => (
           `${pageNumber} / ${totalPages}`
         )} fixed />

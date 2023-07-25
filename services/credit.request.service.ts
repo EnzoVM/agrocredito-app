@@ -44,28 +44,32 @@ export async function listCreditRequestService ({
       jsonFilter = JSON.stringify({
         campaignId,
         farmerType,
-        farmerFullNames,
+        farmerFullNames: farmerType === 'Individual' ? farmerFullNames || '' : undefined,
         farmerSocialReason,
         page,
         limit
       })
     } else {
-      jsonFilter = JSON.stringify({
-        campaignId,
-        farmerType,
-        creditRequestStatus,
-        farmerFullNames,
-        farmerSocialReason,
-        page,
-        limit
-      })
+        jsonFilter = JSON.stringify({
+          campaignId,
+          farmerType,
+          creditRequestStatus,
+          farmerFullNames: farmerType === 'Individual' ? farmerFullNames || '' : undefined,
+          farmerSocialReason,
+          page,
+          limit
+        })
     }
+
+    console.log(jsonFilter)
 
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/credit-requests/list/${jsonFilter}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
     })
+
+    console.log(response.data.data)
     
     return response.data.data
   } catch (error: any) {
