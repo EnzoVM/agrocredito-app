@@ -110,11 +110,11 @@ export default function FarmerTable() {
 
     if(inputSearchFilter === ''){
       return setFilters({
+        ...filters,
         searchType: 'code',
         farmerId: '',
         farmerFullNames: '',
         farmerSocialReason: '',
-        farmerType: 'Individual',
         page: 1,
         limit: 6
       })
