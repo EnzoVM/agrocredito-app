@@ -50,24 +50,21 @@ export default function CreateCreditRequest ({
   }>({
     farmerId: '',
     campaignId: '',
-    //@ts-ignore
-    hectareNumber: '',
+    hectareNumber: 0,
     creditReason: '',
     creditAmount: 0,
     guaranteeDescription: '',
-    //@ts-ignore
-    guaranteeAmount: '',
-    //@ts-ignore
-    technicalId: '',
+    guaranteeAmount: 0,
+    technicalId: 0,
     creditRequestObservation: ''
   })
 
   const [modalFormIsOpen, setModalFormIsOpen] = useState(false)
   const [modalErrorMessageIsOpen, setModalErrorMessageIsOpen] = useState(false)
   const [amountPerHectare, setAmountPerHectare] = useState(0)
+  const [numberOfHectares, setNumberOfHectares] = useState(0)
   const [creditAmount, setCreditAmount] = useState('')
   const [farmer, setFarmer] = useState('')
-  const [assistanceTypeId, setAssistanceTypeId] = useState(0)
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
@@ -90,20 +87,26 @@ export default function CreateCreditRequest ({
 
   const handleChangeTechnicalByAssistanceType = async (event: ChangeEvent<HTMLSelectElement>) => {
     const assistanceTypeId: number = Number(event.target.value)
-    setAssistanceTypeId(assistanceTypeId)
     const technicalList = await listTechnicalByAssistanceTypeService({assistanceTypeId})
     setTechnicalList(technicalList)    
   }
 
   const handleChangeAmountPerHectare = (event: ChangeEvent<HTMLSelectElement>) => {
+    const amountPerHectare: number = Number(event.target.value)
     setAmountPerHectare(Number(event.target.value))
+    
+    const creditAmount: number = numberOfHectares*amountPerHectare
+    setCreditAmount(creditAmount.toLocaleString('es-PE', { style: 'currency', currency: 'PEN' }))
+    setCreditRequest({... creditRequest, creditAmount: Number(creditAmount.toFixed(2))})
   }
 
   const handleChangeCreditAmount = (event: ChangeEvent<HTMLInputElement>) => {
     const hectareNumber: number = Number(event.target.value)
+    setNumberOfHectares(hectareNumber)
+    
     const creditAmount: number = hectareNumber*amountPerHectare
     setCreditAmount(creditAmount.toLocaleString('es-PE', { style: 'currency', currency: 'PEN' }))
-    setCreditRequest({... creditRequest, hectareNumber, creditAmount})
+    setCreditRequest({... creditRequest, hectareNumber, creditAmount: Number(creditAmount.toFixed(2))})
   }
   
   const handleChange = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
@@ -127,29 +130,10 @@ export default function CreateCreditRequest ({
     event.preventDefault()
     
     const creditRequestData = {... creditRequest, campaignId}
+
     createCreditRequestService(creditRequestData)
     .then(response => {
       console.log(response)
-      setCreditRequest({
-        farmerId: '',
-        campaignId: '',
-        //@ts-ignore
-        hectareNumber: '',
-        creditReason: '',
-        creditAmount: 0,
-        guaranteeDescription: '',
-        //@ts-ignore
-        guaranteeAmount: '',
-        //@ts-ignore
-        technicalId: '',
-        creditRequestObservation: ''
-      })
-      //@ts-ignore
-      setAmountPerHectare('')
-      setCreditAmount('')
-      //@ts-ignore
-      setAssistanceTypeId('')
-      setFarmer('')
       setToggleCreate(false)
     })
     .catch(error => {
@@ -180,7 +164,7 @@ export default function CreateCreditRequest ({
               <div className="flex justify-between">   
                 <div className="mb-6 w-full mr-4">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de partida:</label>
-                  <select onChange={handleChangeAmountPerHectare} value={amountPerHectare} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                  <select onChange={handleChangeAmountPerHectare} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                     <option value="">Elegir partida</option>
                     {
                       departureDetailList.map(departure => (
@@ -197,7 +181,6 @@ export default function CreateCreditRequest ({
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                     name="hectareNumber"
                     onChange={handleChangeCreditAmount}
-                    value={creditRequest.hectareNumber}
                     required
                   />
                 </div>
@@ -211,7 +194,6 @@ export default function CreateCreditRequest ({
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                     name="creditReason"
                     onChange={handleChange}
-                    value={creditRequest.creditReason}
                     required
                   />
                 </div>
@@ -236,7 +218,6 @@ export default function CreateCreditRequest ({
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                     name="guaranteeDescription"
                     onChange={handleChange}
-                    value={creditRequest.guaranteeDescription}
                     required
                   />
                 </div>
@@ -248,7 +229,6 @@ export default function CreateCreditRequest ({
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                     name="guaranteeAmount"
                     onChange={handleChange}
-                    value={creditRequest.guaranteeAmount}
                     required
                   />
                 </div>
@@ -256,7 +236,7 @@ export default function CreateCreditRequest ({
               <div className="flex justify-between">   
                 <div className="mb-6 w-full mr-4">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de asistencia tecnica:</label>
-                  <select value={assistanceTypeId} onChange={handleChangeTechnicalByAssistanceType} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                  <select onChange={handleChangeTechnicalByAssistanceType} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                     <option value="">Elegir tipo</option>
                     {
                       assistanceTypeList.map(assistance => (
@@ -267,7 +247,7 @@ export default function CreateCreditRequest ({
                 </div>
                 <div className="mb-6 w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tecnico:</label>
-                  <select name='technicalId' value={creditRequest.technicalId} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                  <select name='technicalId' onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                     <option value="">Elegir tecnico</option>
                     {
                       technicalList.map(technical => (
@@ -303,7 +283,6 @@ export default function CreateCreditRequest ({
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                     name="creditRequestObservation"
                     onChange={handleChange}
-                    value={creditRequest.creditRequestObservation}
                     required
                   />
                 </div>
