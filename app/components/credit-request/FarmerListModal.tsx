@@ -4,6 +4,7 @@ import { Button, Modal } from "flowbite-react"
 import FamerTableSkeleton from '../farmer/FarmerTableSkeleton'
 import { listFarmerService } from "@/services/farmer.service"
 import { listProjectBySectorService } from "@/services/project.service"
+import React from "react"
 
 interface Props {
   modalFormIsOpen: boolean
@@ -65,7 +66,6 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
   const [paginationSelected, setPaginationSelected] = useState(1)
   const [paginationNumbers, setPaginationNumbers] = useState<number[]>([1,2,3,4,5])
   const [totalNumberOfCampaigns, setTotalNumberOfCampaigns] = useState(0)
-  const [inputSearchFilter, setInputSearchFilter] = useState('')
   const [isLoadding, setIsLoadding] = useState(true)
   const [projectList, setProjectList] = useState<{
     projectId: string
@@ -77,7 +77,8 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
 
   const paginateUnSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
   const paginateSelectedStyle = 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-600 dark:border-gray-600 dark:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white'
-
+  const inputSearchFilterValue = React.useRef(null)
+  
   useEffect(() => {
     setIsLoadding(true)
     listFarmerService({
@@ -128,14 +129,17 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
 
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
+    
+    //@ts-ignore
+    const inputSearchFilter = inputSearchFilterValue.current?.value
+    
     if(inputSearchFilter === ''){
       return setFilters({
+        ...filters,
         searchType: 'code',
         farmerId: '',
         farmerFullNames: '',
         farmerSocialReason: '',
-        farmerType: 'Individual',
         page: 1,
         limit: 6
       })
@@ -160,10 +164,6 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
         page: 1
       })
     }
-  }
-
-  const handlerChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputSearchFilter(event.target.value)
   }
 
   const returnPreviosPage = () => {
@@ -194,18 +194,18 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
 
   return (
     <>
-      <Modal show={modalFormIsOpen} onClose={() => setModalFormIsOpen(false)}>
+      <Modal show={modalFormIsOpen} onClose={() => setModalFormIsOpen(false)} size={'6xl'}>
         <Modal.Header className="border-b w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800">
             Listado de Agricultores
         </Modal.Header>
-        <Modal.Body className="border-b w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800">
-          <div className="flex justify-end pb-2">
+        <Modal.Body className="px-6 py-5 border-b w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800 ">
+          <div className="flex justify-start pb-2">
             <p className="w-40 mr-4">Tipo:</p>
             <p className="w-40 mr-4">Sector:</p>
             <p className="w-40">Proyecto:</p>
           </div>
           <div className="flex justify-between">
-            <div className="flex justify-end pb-4">
+            <div className="flex justify-end">
               <select name="campaignTypeId" onChange={handlerChangeFarmerType} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 <option value="Individual">Individual</option>
                 <option value="Asociación">Asociación</option>
@@ -226,10 +226,10 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
               </select>
             </div>
           </div>
-          <div className="relative border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800 overflow-x-auto shadow-md sm:rounded-lg">
-            <div className="flex justify-end p-4">
+          <div className="relative border-gray-200 dark:border-gray-700 dark:bg-gray-800 overflow-x-auto sm:rounded-lg">
+            <div className="flex py-4">
               <label className="sr-only">Buscar</label>
-              <div className="relative">
+              <div className="relative w-full">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <svg
                     className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -246,13 +246,13 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
                   </svg>
                 </div>
                 <form onSubmit={handlerSubmit}>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between w-full">
                     <input
                       type="text"
                       id="table-search"
-                      className="mr-4 block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-96 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      className="mr-4 block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-96 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Buscar agricultor por nombre o razón social"
-                      onChange={handlerChange}
+                      ref={inputSearchFilterValue}
                     />
                     <Button
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
@@ -267,27 +267,27 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 text-center">
                     Código
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 text-center">
                     Calidad
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 text-center">
                     Tipo
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 text-center">
                     {
                       filters.farmerType === 'Individual' ? 'NOMBRES' : 'RAZÓN SOCIAL'
                     }
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  <th scope="col" className="px-6 py-3 text-center">
                     {
                       filters.farmerType === 'Individual' ? 'DNI' : 'RUC'
                     }
                   </th>
-                  <th scope="col" className="px-6 py-3">
-                    Seleccionar Agricultor
+                  <th scope="col" className="px-6 py-3 text-center">
+                    Seleccionar
                   </th>
                 </tr>
               </thead>
@@ -307,17 +307,17 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
                         <tr key={farmer.farmerId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                           <th
                             scope="row"
-                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                            className="px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center" 
                           >
                             {farmer.farmerId}
                           </th>
-                          <td className="px-6 py-4">{farmer.farmerQualityDescription}</td>
-                          <td className="px-6 py-4">{farmer.farmerType}</td>
-                          <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason}</td>
-                          <td className="px-6 py-4">{filters.farmerType === 'Individual' ? farmer.dni : farmer.ruc}</td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 text-center">{farmer.farmerQualityDescription}</td>
+                          <td className="px-6 text-center">{farmer.farmerType}</td>
+                          <td className="px-6 text-center">{filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason}</td>
+                          <td className="px-6 text-center">{filters.farmerType === 'Individual' ? farmer.dni : farmer.ruc}</td>
+                          <td className="px-6 py-2 text-center">
                           <Button
-                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
                             onClick={() => {
                               setCreditRequest({... creditRequest, farmerId: farmer.farmerId})
                               let farmerName = filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason
@@ -413,6 +413,14 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
             </nav>
           </div>
         </Modal.Body>
+        <Modal.Footer className="border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+          <Button
+            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            onClick={() => setModalFormIsOpen(false)}
+          >
+            Cancelar
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );
