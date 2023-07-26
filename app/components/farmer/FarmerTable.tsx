@@ -102,7 +102,7 @@ export default function FarmerTable() {
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {
     const farmerType = event.target.value as 'Individual' | 'Asociación'
 
-    setFilters({ ...filters, farmerType: farmerType })
+    setFilters({ ...filters, farmerType: farmerType, farmerFullNames:  farmerType === 'Individual' ? filters.farmerFullNames || filters.farmerSocialReason : '', farmerSocialReason: farmerType === 'Asociación' ? filters.farmerFullNames || filters.farmerSocialReason : ''})
   }
 
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
