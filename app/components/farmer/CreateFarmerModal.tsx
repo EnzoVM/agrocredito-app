@@ -414,7 +414,7 @@ export default function CreateFarmerModal ({ modalFormIsOpen, setModalFormIsOpen
                 <option value="">Elegir distrito</option>
                 {
                   projectAddressList.map(projectAddress => (
-                    <option value={projectAddress.projectCode} key={projectAddress.projectId}>{projectAddress.projectDescription}</option>
+                    <option value={projectAddress.projectId} key={projectAddress.projectId}>{projectAddress.projectDescription}</option>
                   ))
                 }
               </select>
