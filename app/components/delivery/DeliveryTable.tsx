@@ -2,38 +2,36 @@
 
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
-import Link from "next/link"
-import CreditRequestTableSkeleton from "./CreditRequestTableSkeleton"
-import { listCreditRequestService } from "@/services/credit.request.service"
+import DeliveryTableSkeleton from "./DeliveryTableSkeleton"
 import moment from 'moment'
 import 'moment/locale/es'
-import CreditRequestReportGenerator from "./CreditRequestReportGenerator"
+import { listDeliveriesService } from "@/services/delivery.service"
 
-export default function CreditRequestTable({ campaignId }: { campaignId: string }) {
-  const [creditRequests, setCreditRequests] = useState<{
-    creditRequestId: string
+export default function DeliveryTable({ campaignId }: { campaignId: string }) {
+  const [deliveries, serDeliveries] = useState<{
+    deliveryId: number
     campaignId: string
     fullNames?: string
     socialReason?: string
-    creditAmount: number
-    createDateTime: Date
-    updateStatusDateTime?: Date
-    creditRequestStatus: string
+    deliveryDateTime: Date
+    providerDescription: string
+    financialSourceDescription: string
+    currentAccountDescription: string
+    gloss: string
+    deliveryAmount: number
   }[]>([])
 
   const [filters, setFilters] = useState<{
     campaignId: string,
-    farmerType: 'Individual' | 'Asociación', 
-    creditRequestStatus?: 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado',
-    farmerFullNames?: string, 
-    farmerSocialReason?: string,
+    farmerType: 'Individual' | 'Asociación',
+    fullNames?: string, 
+    socialReason?: string,
     page: number, 
     limit: number
   }>({
     campaignId: '',
-    farmerFullNames: '',
-    creditRequestStatus: undefined,
-    farmerSocialReason: '',
+    fullNames: '',
+    socialReason: '',
     farmerType: 'Individual',
     page: 1,
     limit: 6
@@ -41,7 +39,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
 
   const [paginationSelected, setPaginationSelected] = useState(1)
   const [paginationNumbers, setPaginationNumbers] = useState<number[]>([1,2,3,4,5])
-  const [totalNumberOfCreditRequests, setTotalNumberOfCreditRequests] = useState(0)
+  const [totalNumberOfDeliveries, setTotalNumberOfDeliveries] = useState(0)
   const [inputSearchFilter, setInputSearchFilter] = useState('')
   const [isLoadding, setIsLoadding] = useState(true)
 
@@ -50,19 +48,18 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
 
   useEffect(() => {
     setIsLoadding(true)
-    listCreditRequestService({
+    listDeliveriesService({
       campaignId,
       farmerType: filters.farmerType,
-      creditRequestStatus: filters.creditRequestStatus,
-      farmerFullNames: filters.farmerFullNames,
-      farmerSocialReason: filters.farmerSocialReason,
+      fullNames: filters.fullNames,
+      socialReason: filters.socialReason,
       page: filters.page,
       limit: filters.limit
     })
       .then(response => {
-        console.log(response.creditRequests)
-        setCreditRequests(response.creditRequests)
-        setTotalNumberOfCreditRequests(response.count)
+        console.log(response.deliveries)
+        serDeliveries(response.deliveries)
+        setTotalNumberOfDeliveries(response.count)
         setIsLoadding(false)
       })
       .catch(error => console.log(error))
@@ -76,28 +73,14 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
     setPaginationSelected(1)
   }
 
-  const handlerChangeCreditRequestStatus = async (event: ChangeEvent<HTMLSelectElement>) => {
-    const creditRequestStatus = event.target.value as 'Aprobado' | 'Pendiente' | 'Rechazado' | 'Pagado'
-    console.log(filters)
-    // @ts-ignore
-    if (creditRequestStatus === '') {
-      setFilters({ ...filters, creditRequestStatus: undefined, page: 1 })
-      setPaginationSelected(1)
-      return
-    }
-
-    setFilters({ ...filters, creditRequestStatus, page: 1 })
-    setPaginationSelected(1)
-  }
-
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if(inputSearchFilter === ''){
       return setFilters({
         ...filters,
-        farmerFullNames: '',
-        farmerSocialReason: '',
+        fullNames: '',
+        socialReason: '',
         farmerType: 'Individual',
         page: 1,
         limit: 6
@@ -107,8 +90,8 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
     if(filters.farmerType === 'Individual'){
       return setFilters({
         ...filters, 
-        farmerFullNames: inputSearchFilter, 
-        farmerSocialReason: '',
+        fullNames: inputSearchFilter, 
+        socialReason: '',
         page: 1
       })
     }
@@ -116,8 +99,8 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
     if(filters.farmerType === 'Asociación'){
       return setFilters({
         ...filters, 
-        farmerSocialReason: inputSearchFilter, 
-        farmerFullNames: '',
+        socialReason: inputSearchFilter, 
+        fullNames: '',
         page: 1
       })
     }
@@ -141,7 +124,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
   }
 
   const goNextPage = () => {
-    if(filters.page >= Math.ceil(totalNumberOfCreditRequests/filters.limit)){
+    if(filters.page >= Math.ceil(totalNumberOfDeliveries/filters.limit)){
       setFilters({...filters}) 
     }else {
       setFilters({...filters, page: filters.page + 1})
@@ -161,13 +144,6 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
             <select name="farmerType" onChange={handlerChangeFarmerType} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
               <option value="Individual">Individual</option>
               <option value="Asociación">Asociación</option>
-            </select>
-            <select name="creditRequestStatus" onChange={handlerChangeCreditRequestStatus} className="w-50 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-              <option value="">Estado de solicitud </option>
-              <option value="Pendiente">Pendiente</option>
-              <option value="Aprobado">Aprobado</option>
-              <option value="Rechazado">Rechazado</option>
-              <option value="Pagado">Pagado</option>
             </select>
           </div>
           <label className="sr-only">Buscar</label>
@@ -193,7 +169,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
                   type="text"
                   id="table-search"
                   className="mr-4 block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-96 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Buscar crédito por nombre o razón social"
+                  placeholder="Buscar entrega por nombre o razón social"
                   onChange={handlerChange}
                 />
                 <Button
@@ -210,7 +186,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3 text-center">
-                CODIGO DE CAMPAÑA
+                CODIGO DE ENTREGA
               </th>
               <th scope="col" className="px-6 py-3 text-center">
                 {
@@ -218,19 +194,22 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
                 }
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                MONTO DEL CREDITO
+                FECHA DE LA ENTREGA
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                FECHA DE SOLICITUD
+                PROVEEDOR
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                ESTADO DE SOLICITUD
+                FUENTE FINANCIERA
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                Mas información
+                CUENTA CORRIENTE
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                REPORTE
+                GLOSA
+              </th>
+              <th scope="col" className="px-6 py-3 text-center">
+                MONTO DE LA ENTREGA
               </th>
             </tr>
           </thead>
@@ -238,45 +217,29 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
             {
               isLoadding
               ?
-                <CreditRequestTableSkeleton />
+                <DeliveryTableSkeleton />
               :
-                totalNumberOfCreditRequests === 0
+                totalNumberOfDeliveries === 0
                 ?
                   <div className="text-center text-gray-600">
                       No se encontraron resultados.
                   </div>
                 :
-                  creditRequests.map(creditRequest => (
-                    <tr key={creditRequest.creditRequestId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  deliveries.map(delivery => (
+                    <tr key={delivery.deliveryId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center"
                       >
-                        {creditRequest.campaignId}
+                        {delivery.deliveryId}
                       </th>
-                      <td className="px-6 py-4 text-center">{creditRequest.fullNames ? creditRequest.fullNames : creditRequest.socialReason}</td>
-                      <td className="px-6 py-4 text-center">{creditRequest.creditAmount}</td>
-                      <td className="px-6 py-4 text-center">{moment(creditRequest.createDateTime).format('LLLL')}</td>
-                      <td className="px-6 py-4 text-center">{
-                        creditRequest.creditRequestStatus === 'Pendiente' 
-                          ? <span className="bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Pendiente</span>
-                          : creditRequest.creditRequestStatus === 'Aprobado'
-                            ?  <span className="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Aprobado</span>
-                            : creditRequest.creditRequestStatus === 'Rechazado'
-                              ? <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Rechazado</span>
-                              : <span className="bg-gray-100 text-gray-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Pagado</span>
-                      }</td>
-                      <td className="px-6 py-4 text-center">
-                        <Link
-                          href={`credit-request/${creditRequest.creditRequestId}`}
-                          className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        >
-                          Más información
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <CreditRequestReportGenerator creditRequestId={creditRequest.creditRequestId} />
-                      </td>
+                      <td className="px-6 py-4 text-center">{delivery.fullNames ? delivery.fullNames : delivery.socialReason}</td>
+                      <td className="px-6 py-4 text-center">{moment(delivery.deliveryDateTime).format('LLLL')}</td>
+                      <td className="px-6 py-4 text-center">{delivery.providerDescription}</td>
+                      <td className="px-6 py-4 text-center">{delivery.financialSourceDescription}</td>
+                      <td className="px-6 py-4 text-center">{delivery.currentAccountDescription}</td>
+                      <td className="px-6 py-4 text-center">{delivery.gloss}</td>
+                      <td className="px-6 py-4 text-center">{delivery.deliveryAmount}</td>
                     </tr>
                   ))
             }
@@ -289,11 +252,11 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
           <span className="text-sm m-4 font-normal text-gray-500 dark:text-gray-400">
             Mostrando{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
-              {totalNumberOfCreditRequests === 0 ? 0 : filters.page*filters.limit-filters.limit+1} - {totalNumberOfCreditRequests<filters.limit ? totalNumberOfCreditRequests : filters.page*filters.limit<totalNumberOfCreditRequests ? filters.page*filters.limit : totalNumberOfCreditRequests }
+              {totalNumberOfDeliveries === 0 ? 0 : filters.page*filters.limit-filters.limit+1} - {totalNumberOfDeliveries<filters.limit ? totalNumberOfDeliveries : filters.page*filters.limit<totalNumberOfDeliveries ? filters.page*filters.limit : totalNumberOfDeliveries }
             </span>{" "}
             de{" "}
             <span className="font-semibold text-gray-900 dark:text-white">
-              {totalNumberOfCreditRequests}
+              {totalNumberOfDeliveries}
             </span>
           </span>
           <ul className="inline-flex m-4 items-center -space-x-px">
@@ -324,7 +287,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
                   <a
                     className={paginationSelected === page ? paginateSelectedStyle : paginateUnSelectedStyle}
                     onClick={() => {
-                      if(page>Math.ceil(totalNumberOfCreditRequests/filters.limit)) {
+                      if(page>Math.ceil(totalNumberOfDeliveries/filters.limit)) {
                         setFilters({...filters})
                       }else {
                         setFilters({...filters, page})
@@ -332,7 +295,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
                       } 
                     }}
                   >
-                    {page>Math.ceil(totalNumberOfCreditRequests/filters.limit) ? '' : page}
+                    {page>Math.ceil(totalNumberOfDeliveries/filters.limit) ? '' : page}
                   </a>
                 </li>
               ))
