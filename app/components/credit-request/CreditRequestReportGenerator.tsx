@@ -65,7 +65,7 @@ export default function CreditRequestReportGenerator ({ creditRequestId }: { cre
 
     try {
       const { recordId } = await createLogRecord({
-        resource: 'credit-request-detail',
+        resource: 'report-credit-request-detail',
         method: 'GET',
         initRequestTime: initRequestTimeLog
       })

@@ -49,7 +49,7 @@ export default function CreditRequestGeneralReportGenerator ({ campaignId }: { c
 
     try {
       const { recordId } = await createLogRecord({
-        resource: 'pending-credit-requests',
+        resource: 'report-pending-credit-requests',
         method: 'GET',
         initRequestTime: initRequestTimeLog
       })
