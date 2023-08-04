@@ -115,6 +115,14 @@ export default function CreditRequestDocument ({ creditRequestData }: { creditRe
           </View>
           <View style={styles.tableRow}> 
             <View style={styles.tableCol}> 
+              <Text style={styles.tableCell}>Monto del crédito:</Text> 
+            </View> 
+            <View style={styles.tableCol}> 
+              <Text style={styles.tableCell}>${creditRequestData.creditAmount}</Text> 
+            </View>
+          </View>
+          <View style={styles.tableRow}> 
+            <View style={styles.tableCol}> 
               <Text style={styles.tableCell}>Razón del crédito:</Text> 
             </View> 
             <View style={styles.tableCol}> 
@@ -134,7 +142,7 @@ export default function CreditRequestDocument ({ creditRequestData }: { creditRe
               <Text style={styles.tableCell}>Valor de la garantía:</Text> 
             </View> 
             <View style={styles.tableCol}> 
-              <Text style={styles.tableCell}>{creditRequestData.guaranteeAmount}</Text> 
+              <Text style={styles.tableCell}>${creditRequestData.guaranteeAmount}</Text> 
             </View>
           </View>
           <View style={styles.tableRow}> 

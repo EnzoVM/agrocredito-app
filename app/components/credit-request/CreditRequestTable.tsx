@@ -255,7 +255,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
                         {creditRequest.campaignId}
                       </th>
                       <td className="px-6 py-4 text-center">{creditRequest.fullNames ? creditRequest.fullNames : creditRequest.socialReason}</td>
-                      <td className="px-6 py-4 text-center">{creditRequest.creditAmount}</td>
+                      <td className="px-6 py-4 text-center">${creditRequest.creditAmount}</td>
                       <td className="px-6 py-4 text-center">{moment(creditRequest.createDateTime).format('LLLL')}</td>
                       <td className="px-6 py-4 text-center">{
                         creditRequest.creditRequestStatus === 'Pendiente' 

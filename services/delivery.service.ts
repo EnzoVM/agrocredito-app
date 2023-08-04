@@ -10,7 +10,7 @@ export async function listDeliveriesService ({
   limit
 }: {
   campaignId: string,
-  farmerType: 'Individual' | 'Asociación',
+  farmerType: 'Individual' | 'Asociación' | 'All',
   fullNames?: string, 
   socialReason?: string,
   page: number, 
