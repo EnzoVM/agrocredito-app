@@ -6,6 +6,7 @@ import DeliveryTableSkeleton from "./DeliveryTableSkeleton"
 import moment from 'moment'
 import 'moment/locale/es'
 import { listDeliveriesService } from "@/services/delivery.service"
+import DeliveryGeneralReportGenerator from "./DeliveryGeneralReportGenerator"
 
 export default function DeliveryTable({ campaignId }: { campaignId: string }) {
   const [deliveries, serDeliveries] = useState<{
@@ -37,6 +38,8 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
     limit: 6
   })
 
+  const [totalAmount, setTotalAmount] = useState(0)
+
   const [paginationSelected, setPaginationSelected] = useState(1)
   const [paginationNumbers, setPaginationNumbers] = useState<number[]>([1,2,3,4,5])
   const [totalNumberOfDeliveries, setTotalNumberOfDeliveries] = useState(0)
@@ -59,6 +62,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
       .then(response => {
         console.log(response.deliveries)
         serDeliveries(response.deliveries)
+        setTotalAmount(response.deliveries.reduce((accum, delivery) => accum + delivery.deliveryAmount, 0))
         setTotalNumberOfDeliveries(response.count)
         setIsLoadding(false)
       })
@@ -145,6 +149,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
               <option value="Individual">Individual</option>
               <option value="Asociación">Asociación</option>
             </select>
+            <DeliveryGeneralReportGenerator campaignId={campaignId} />
           </div>
           <label className="sr-only">Buscar</label>
           <div className="relative">
@@ -209,7 +214,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                 GLOSA
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                MONTO DE LA ENTREGA
+                MONTO ENTREGADO
               </th>
             </tr>
           </thead>
@@ -239,14 +244,17 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                       <td className="px-6 py-4 text-center">{delivery.financialSourceDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.currentAccountDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.gloss}</td>
-                      <td className="px-6 py-4 text-center">{delivery.deliveryAmount}</td>
+                      <td className="px-6 py-4 text-center">${delivery.deliveryAmount}</td>
                     </tr>
                   ))
             }
           </tbody>
         </table>
+        <div className="flex justify-end pr-4 pt-4">
+          Monto total entregado: ${totalAmount}
+        </div>
         <nav
-          className="flex items-center justify-between pt-4"
+          className="flex items-center justify-between"
           aria-label="Table navigation"
         >
           <span className="text-sm m-4 font-normal text-gray-500 dark:text-gray-400">

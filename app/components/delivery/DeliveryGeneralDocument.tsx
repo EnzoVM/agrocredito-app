@@ -61,15 +61,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function CreditRequestGenenalDocument ({ creditRequests, campaignId }: { creditRequests: {
-    creditRequestId: string
+export default function DeliveryGenenalDocument ({ deliveries, campaignId }: { deliveries: {
+    deliveryId: number
     campaignId: string
     fullNames?: string
     socialReason?: string
-    creditAmount: number
-    createDateTime: Date
-    updateStatusDateTime?: Date
-    creditRequestStatus: string
+    deliveryDateTime: Date
+    providerDescription: string
+    financialSourceDescription: string
+    currentAccountDescription: string
+    gloss: string
+    deliveryAmount: number
   }[], 
   campaignId: string
 }) {
@@ -78,46 +80,64 @@ export default function CreditRequestGenenalDocument ({ creditRequests, campaign
     <Document>
     <Page style={styles.body}>
       <Text style={styles.textLogo}>AgroCredito PEBPT</Text>
-      <Text style={styles.text}>Reporte de la solicitud de crédito</Text>
-      <Text style={styles.textSecondary}>Las solicitudes de crédito mostradas en el presente reporte son las que poseen como estado pendiente de aprobación para la campaña {campaignId}.</Text>
+      <Text style={styles.text}>Reporte de entregas</Text>
+      <Text style={styles.textSecondary}>Las entregas mostradas a continuación son de la campaña {campaignId}.</Text>
       {
-        creditRequests.length === 0
-          ? <Text style={styles.textNotFound}>No existen solicitudes de crédito pendientes para la campaña {campaignId}</Text>
+        deliveries.length === 0
+          ? <Text style={styles.textNotFound}>No existen entregas para la campaña {campaignId}</Text>
           : <View style={styles.table}>
               <View style={styles.tableRow}>
                 <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>Código de la campaña</Text>
+                  <Text style={styles.tableCell}>Código de la entrega</Text>
                 </View> 
                 <View style={styles.tableCol}>
                   <Text style={styles.tableCell}>Nombres / Razón social:</Text>
                 </View> 
                 <View style={styles.tableCol}> 
-                  <Text style={styles.tableCell}>Monto del crédito</Text> 
+                  <Text style={styles.tableCell}>Fecha de la entrega:</Text> 
                 </View>
                 <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>Fecha de la solicitud:</Text>
+                  <Text style={styles.tableCell}>Proveedor:</Text>
                 </View> 
                 <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>Estado de la solicitud:</Text>
+                  <Text style={styles.tableCell}>Fuente financiera:</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Cuenta corriente:</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Glosa:</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Monto entregado:</Text>
                 </View>
               </View>
               {
-                creditRequests.map(creditRequest => (
-                  <View key={creditRequest.creditRequestId} style={styles.tableRow}> 
+                deliveries.map(delivery => (
+                  <View key={delivery.deliveryId} style={styles.tableRow}> 
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRequest.campaignId}</Text> 
+                      <Text style={styles.tableCell}>{delivery.deliveryId}</Text> 
                     </View> 
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRequest.fullNames || creditRequest.socialReason}</Text> 
+                      <Text style={styles.tableCell}>{delivery.fullNames || delivery.socialReason}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>${creditRequest.creditAmount}</Text> 
+                      <Text style={styles.tableCell}>{moment(delivery.deliveryDateTime).format('LLLL')}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{moment(creditRequest.createDateTime).format('LLLL')}</Text> 
+                      <Text style={styles.tableCell}>{delivery.providerDescription}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRequest.creditRequestStatus}</Text> 
+                      <Text style={styles.tableCell}>{delivery.financialSourceDescription}</Text> 
+                    </View>
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{delivery.currentAccountDescription}</Text> 
+                    </View>
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{delivery.gloss}</Text> 
+                    </View>
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>${delivery.deliveryAmount}</Text> 
                     </View>
                   </View>
                 ))
