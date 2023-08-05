@@ -28,11 +28,9 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
   
   const campaignDescriptionValue = React.useRef(null)
   const campaignTypeIdValue = React.useRef(null)
-  const campaignYearValue = React.useRef(null)
-  const startDayValue = React.useRef(null)
-  const startMonthValue = React.useRef(null)
-  const finishDayValue = React.useRef(null)
-  const finishMonthValue = React.useRef(null)
+  const campaignInterestValue = React.useRef(null)
+  const startDateValue = React.useRef(null)
+  const finishDateValue = React.useRef(null)
 
   useEffect(() => {
     listCampaignTypeService()
@@ -48,29 +46,30 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
     //@ts-ignore
     campaignTypeIdValue.current.value=''
     //@ts-ignore
-    campaignYearValue.current.value=''
+    campaignInterestValue.current.value=''
     //@ts-ignore
-    startDayValue.current.value=''
+    startDateValue.current.value=''
     //@ts-ignore
-    startMonthValue.current.value=''
-    //@ts-ignore
-    finishDayValue.current.value=''
-    //@ts-ignore
-    finishMonthValue.current.value=''
+    finishDateValue.current.value=''
   }
 
   const getValueInputs = () => {
+    //@ts-ignore
+    const [startYear, startMonth, startDay] = (startDateValue.current?.value).split('-')
+    //@ts-ignore
+    const [finishYear, finishMonth, finishDay] = (finishDateValue.current?.value).split('-')
+
     return {
       //@ts-ignore
       campaignDescription: campaignDescriptionValue.current?.value,
       //@ts-ignore
       campaignTypeId: campaignTypeIdValue.current?.value,
       //@ts-ignore
-      campaignYear: campaignYearValue.current?.value,
-      //@ts-ignore
-      startDate: startDayValue.current?.value+"/"+startMonthValue.current?.value,
-      //@ts-ignore
-      finishDate: finishDayValue.current?.value+"/"+finishMonthValue.current?.value
+      campaignInterest: campaignInterestValue.current?.value,
+      startDate: startDay+"/"+startMonth,
+      finishDate: finishDay+"/"+finishMonth,
+      startYear: startYear,
+      finishYear: finishYear
     }
   }
 
@@ -82,15 +81,21 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const campaignData = getValueInputs()
     setAuthFailed('')
-
+    const campaignData = getValueInputs()
+    
+    if(campaignData.startYear !== campaignData.finishYear){
+      setAuthFailed('El año de la fecha de inicio debe de ser igual al de la fecha final')
+      return 
+    }
+    
     createCampaignService({
       campaignDescription: String(campaignData.campaignDescription),
       campaignTypeId: Number(campaignData.campaignTypeId),
-      campaignYear: String(campaignData.campaignYear),
+      campaignYear: String(campaignData.startYear),
       startDate: String(campaignData.startDate),
-      finishDate: String(campaignData.finishDate)
+      finishDate: String(campaignData.finishDate),
+      campaignInterest: Number(campaignData.campaignInterest)
     })
     .then(response => {
       console.log(response)
@@ -124,24 +129,23 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
                 </div>
               </div>
             : <></>
-        }   
-          <div className="mb-6">
-            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descripcion de la campaña</label>
-            <input
-              type="text"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-              placeholder="Ingrese la descripción de la campaña"
-              ref={campaignDescriptionValue}
-              required
-            />
+        }
+          <div className="flex justify-between">  
+            <div className="mb-6 w-full">
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descripcion de la campaña</label>
+              <input
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                placeholder="Ingrese la descripción de la campaña"
+                ref={campaignDescriptionValue}
+                required
+              />
+            </div>
           </div>
-          <div className="mb-6">
-            <div className="flex justify-around">   
+          <div className="flex justify-between">   
+            <div className="mb-6 w-full mr-4">
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de campaña</label>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Año de la campaña</label>
-            </div>  
-            <div className="flex justify-between">
-              <select  ref={campaignTypeIdValue} name="campaignTypeId" className="w-1/2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+              <select  ref={campaignTypeIdValue} name="campaignTypeId" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 <option value="">Elegir tipo</option>
                 {
                   campaignTypeList.map(campaignType => (
@@ -149,50 +153,37 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
                   ))
                 } 
               </select>
+            </div>
+            <div className="mb-6 w-full">
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Interes (%) de la campaña</label>
               <input
                 type="number"
-                placeholder="Ingrese el año de la campaña" 
-                className="w-1/2 ml-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                ref={campaignYearValue}
+                placeholder="Ingrese el interes de la campaña" 
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                ref={campaignInterestValue}
+                step="0.01"
                 required
               />
             </div>
           </div>
-          <div className="mb-6">
-            <div className="flex justify-around">
+          <div className="flex justify-between">   
+            <div className="w-full mr-4">
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha de inicio del periodo</label>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha fin del periodo</label>
+              <input
+                type="date"
+                placeholder="Ingrese el año de la campaña" 
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                ref={startDateValue}
+                required
+              />
             </div>
-            <div className="flex justify-between">
+            <div className="w-full">
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha fin del periodo</label>
               <input
-                type="number"
-                placeholder="dia" 
-                className="mr-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                ref={startDayValue} 
-                required
-              />
-              <p className="text-4xl"> / </p>
-              <input
-                type="number"
-                placeholder="mes" 
-                className="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                ref={startMonthValue}
-                required
-              />
-              <p className="text-5xl"> - </p>
-              <input
-                type="number"
-                placeholder="dia" 
-                className="mx-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                ref={finishDayValue} 
-                required
-              />
-              <p className="text-4xl"> / </p>
-              <input
-                type="number"
-                placeholder="mes" 
-                className="ml-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                ref={finishMonthValue} 
+                type="date"
+                placeholder="Ingrese el año de la campaña" 
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                ref={finishDateValue}
                 required
               />
             </div>
