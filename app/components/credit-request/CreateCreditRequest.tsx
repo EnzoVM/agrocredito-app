@@ -96,7 +96,7 @@ export default function CreateCreditRequest ({
     setAmountPerHectare(Number(event.target.value))
     
     const creditAmount: number = numberOfHectares*amountPerHectare
-    setCreditAmount(creditAmount.toLocaleString('es-PE', { style: 'currency', currency: 'PEN' }))
+    setCreditAmount(creditAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }))
     setCreditRequest({... creditRequest, creditAmount: Number(creditAmount.toFixed(2))})
   }
 
@@ -105,7 +105,7 @@ export default function CreateCreditRequest ({
     setNumberOfHectares(hectareNumber)
     
     const creditAmount: number = hectareNumber*amountPerHectare
-    setCreditAmount(creditAmount.toLocaleString('es-PE', { style: 'currency', currency: 'PEN' }))
+    setCreditAmount(creditAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }))
     setCreditRequest({... creditRequest, hectareNumber, creditAmount: Number(creditAmount.toFixed(2))})
   }
   
@@ -168,13 +168,13 @@ export default function CreateCreditRequest ({
                     <option value="">Elegir partida</option>
                     {
                       departureDetailList.map(departure => (
-                        <option key={departure.departureDetailId} value={departure.amountPerHectare}>Partida - S/ {departure.amountPerHectare}</option>
+                        <option key={departure.departureDetailId} value={departure.amountPerHectare}>Partida - $/ {departure.amountPerHectare}</option>
                       ))
                     }
                   </select>
                 </div>
                 <div className="mb-6 w-full">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cantidad de hectareas:</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cantidad de hectareas (UND):</label>
                   <input
                     type="number"
                     placeholder="Ingrese la cantidad de hectareas" 
@@ -198,7 +198,7 @@ export default function CreateCreditRequest ({
                   />
                 </div>
                 <div className="mb-6 w-full">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto del credito:</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto del credito ($):</label>
                   <input
                     type="text"
                     placeholder="Monto del credito"
@@ -222,7 +222,7 @@ export default function CreateCreditRequest ({
                   />
                 </div>
                 <div className="mb-6 w-full">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Valor de garantia:</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Valor de garantia ($):</label>
                   <input
                     type="number"
                     placeholder="Ingrese el valor de la garantia" 
