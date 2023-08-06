@@ -81,14 +81,16 @@ export async function createCampaignService ({
   campaignYear,
   startDate, 
   finishDate,
-  campaignInterest
+  campaignInterest,
+  campaignDelinquentInterest
 }:{
   campaignDescription: string,
   campaignTypeId: number,
   campaignYear: string,
   startDate: string,
   finishDate: string,
-  campaignInterest: number
+  campaignInterest: number,
+  campaignDelinquentInterest: number
 }): Promise<string> {
 
   try {
@@ -104,7 +106,8 @@ export async function createCampaignService ({
       campaignYear,
       startDate, 
       finishDate,
-      campaignInterest
+      campaignInterest,
+      campaignDelinquentInterest
     }, {
       headers: {
         Authorization: `Bearer ${accessToken}`

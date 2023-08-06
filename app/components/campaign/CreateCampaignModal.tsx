@@ -29,6 +29,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
   const campaignDescriptionValue = React.useRef(null)
   const campaignTypeIdValue = React.useRef(null)
   const campaignInterestValue = React.useRef(null)
+  const campaignDelinquentInterestValue = React.useRef(null)
   const startDateValue = React.useRef(null)
   const finishDateValue = React.useRef(null)
 
@@ -48,6 +49,8 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
     //@ts-ignore
     campaignInterestValue.current.value=''
     //@ts-ignore
+    campaignDelinquentInterestValue.current.value=''
+    //@ts-ignore
     startDateValue.current.value=''
     //@ts-ignore
     finishDateValue.current.value=''
@@ -66,6 +69,8 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
       campaignTypeId: campaignTypeIdValue.current?.value,
       //@ts-ignore
       campaignInterest: campaignInterestValue.current?.value,
+      //@ts-ignore
+      campaignDelinquentInterest: campaignDelinquentInterestValue.current?.value,
       startDate: startDay+"/"+startMonth,
       finishDate: finishDay+"/"+finishMonth,
       startYear: startYear,
@@ -95,7 +100,8 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
       campaignYear: String(campaignData.startYear),
       startDate: String(campaignData.startDate),
       finishDate: String(campaignData.finishDate),
-      campaignInterest: Number(campaignData.campaignInterest)
+      campaignInterest: Number(campaignData.campaignInterest),
+      campaignDelinquentInterest: Number(campaignData.campaignDelinquentInterest)
     })
     .then(response => {
       console.log(response)
@@ -131,7 +137,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
             : <></>
         }
           <div className="flex justify-between">  
-            <div className="mb-6 w-full">
+            <div className="mb-6 w-full mr-4">
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descripcion de la campaña</label>
               <input
                 type="text"
@@ -141,9 +147,7 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
                 required
               />
             </div>
-          </div>
-          <div className="flex justify-between">   
-            <div className="mb-6 w-full mr-4">
+            <div className="mb-6 w-full">
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de campaña</label>
               <select  ref={campaignTypeIdValue} name="campaignTypeId" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 <option value="">Elegir tipo</option>
@@ -154,13 +158,26 @@ export default function CreateCampaignModal ({ modalFormIsOpen, setModalFormIsOp
                 } 
               </select>
             </div>
-            <div className="mb-6 w-full">
+          </div>
+          <div className="flex justify-between">
+            <div className="mb-6 w-full mr-4">
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Interes (%) de la campaña</label>
               <input
                 type="number"
                 placeholder="Ingrese el interes de la campaña" 
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                 ref={campaignInterestValue}
+                step="0.01"
+                required
+              />
+            </div>
+            <div className="mb-6 w-full">
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Interes Moroso (%) de la campaña</label>
+              <input
+                type="number"
+                placeholder="Ingrese el interes de la campaña" 
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                ref={campaignDelinquentInterestValue}
                 step="0.01"
                 required
               />
