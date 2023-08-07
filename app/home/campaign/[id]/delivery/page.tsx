@@ -2,6 +2,7 @@
 
 import DeliveryTable from "@/app/components/delivery/DeliveryTable";
 import { useState } from "react";
+import CreateDelivery from "@/app/components/delivery/CreateDelivery"
 
 export default function Delivery({ params }: { params: { id: string } }) {
   const [toggleCreate, setToggleCreate] = useState(false);
@@ -54,7 +55,7 @@ export default function Delivery({ params }: { params: { id: string } }) {
         </nav>
       </div>
       {toggleCreate ? (
-        <>Formulario de creacion de entrega</>
+        <CreateDelivery campaignId={params.id} setToggleCreate={setToggleCreate} />
       ) : (
         <DeliveryTable campaignId={params.id} />
       )}
