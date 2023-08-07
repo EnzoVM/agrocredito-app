@@ -5,11 +5,14 @@ import FamerTableSkeleton from '../farmer/FarmerTableSkeleton'
 import { listFarmerService } from "@/services/farmer.service"
 import { listProjectBySectorService } from "@/services/project.service"
 import React from "react"
+import { listApprovedCreditRequestByFarmerService } from "@/services/credit.request.service"
 
 interface Props {
   modalFormIsOpen: boolean
   setModalFormIsOpen: (modalFormIsOpen: boolean) => void
-  creditRequest: {
+  setFarmer: Dispatch<SetStateAction<string>>
+  
+  creditRequest?: {
     farmerId: string;
     campaignId: string;
     hectareNumber: number;
@@ -20,7 +23,7 @@ interface Props {
     technicalId: number;
     creditRequestObservation: string;
   }
-  setCreditRequest: Dispatch<SetStateAction<{
+  setCreditRequest?: Dispatch<SetStateAction<{
     farmerId: string;
     campaignId: string;
     hectareNumber: number;
@@ -31,10 +34,29 @@ interface Props {
     technicalId: number;
     creditRequestObservation: string;
   }>>
-  setFarmer: Dispatch<SetStateAction<string>>
+  
+  campaignId?: string
+  setCreditRequestApprovedList?: Dispatch<SetStateAction<{
+    creditRequestId: string;
+    creditAmount: number;
+    createDateTime: string;
+  }[]>>
+  setDeliveryAmountPEN?: Dispatch<SetStateAction<string>>
+  setDeliveryAmountUSD?: Dispatch<SetStateAction<string>>
 }
 
-export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, creditRequest, setCreditRequest, setFarmer}: Props) {
+export default function FarmerListModal({ 
+  modalFormIsOpen, 
+  setModalFormIsOpen, 
+  creditRequest, 
+  setCreditRequest, 
+  setFarmer, 
+  campaignId, 
+  setCreditRequestApprovedList,
+  setDeliveryAmountPEN,
+  setDeliveryAmountUSD
+}: Props) {
+
   const [farmers, setFarmers] = useState<{
     farmerId: string
     farmerQualityDescription: string
@@ -319,7 +341,21 @@ export default function FarmerListModal({ modalFormIsOpen, setModalFormIsOpen, c
                           <Button
                             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
                             onClick={() => {
-                              setCreditRequest({... creditRequest, farmerId: farmer.farmerId})
+                              if(creditRequest && setCreditRequest) { 
+                                setCreditRequest({... creditRequest, farmerId: farmer.farmerId}) 
+                              }
+                              if(campaignId && setCreditRequestApprovedList && setDeliveryAmountPEN && setDeliveryAmountUSD){
+                                listApprovedCreditRequestByFarmerService({farmerId: farmer.farmerId, campaignId})
+                                  .then(response => {
+                                    console.log(response)
+                                    setCreditRequestApprovedList(response)
+                                  })
+                                  .catch(error => {
+                                    setCreditRequestApprovedList([])
+                                    setDeliveryAmountPEN('')
+                                    setDeliveryAmountUSD('')
+                                  })
+                              }
                               let farmerName = filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason
                               setFarmer(farmer.farmerId+' - '+farmerName)
                               setModalFormIsOpen(false)
