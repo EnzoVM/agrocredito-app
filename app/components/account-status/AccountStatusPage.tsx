@@ -8,8 +8,10 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
     amountDeliveredPercentage: 0,
     creditAmount: 0,
     delinquentInterest: 0,
+    delinquentInterestPercentage: 0,
     finalDebt: 0,
     interest: 0,
+    interesPercentage: 0,
     payments: [],
     totalPayment: 0
   })
@@ -42,14 +44,14 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
           <div className="dark:bg-gray-600 rounded-md">
             <div className="flex justify-between px-12 pt-4 pb-2">
               <p className="text-md tracking-tight text-gray-900 dark:text-white">Total de crédito aprobado:</p>
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">{accountStateData.creditAmount}</p>
+              <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.creditAmount}</p>
             </div>
             <div className="flex justify-between px-12 py-2">
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">Interes:</p>
+              <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés ({accountStateData.interesPercentage}%):</p>
               <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.interest}</p>
             </div>
             <div className="flex justify-between px-12 py-2">
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">Interes moratorio:</p>
+              <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés moratorio ({accountStateData.delinquentInterestPercentage}%):</p>
               <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.delinquentInterest}</p>
             </div>
             <div className="flex justify-between px-12 py-2">
