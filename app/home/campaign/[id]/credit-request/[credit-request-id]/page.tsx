@@ -4,6 +4,7 @@ import { getCreditRequestService, updateCreditRequestStatusService } from "@/ser
 import { ChangeEvent, useEffect, useState } from "react"
 import moment from 'moment'
 import 'moment/locale/es'
+import AccountSatusPage from "@/app/components/account-status/AccountStatusPage"
 
 export default function CreditRequestDetail ({ params }: { params: { 'credit-request-id': string }}) {
   const [creditRequestDetail, setCreditRequestDetail] = useState<{
@@ -150,11 +151,7 @@ export default function CreditRequestDetail ({ params }: { params: { 'credit-req
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Fecha de modificación del estado de la solicitud:</p>
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.updateStatusDateTime ? moment(creditRequestDetail.updateStatusDateTime).format('LLLL') : 'Sin modificaciones'}</p>
                 </div>
-                <div className="block w-full p-6 bg-white border border-gray-700 rounded-lg dark:bg-gray-800">
-                  <div className="flex justify-between mb-4">
-                    <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Estado de cuenta del crédito:</h5>
-                  </div>
-                </div>
+                <AccountSatusPage creditRequestId={params["credit-request-id"]} />
               </div>
             </div>
       }
