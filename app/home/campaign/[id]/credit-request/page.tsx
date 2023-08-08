@@ -7,12 +7,14 @@ import { Button } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { listDepatureDetailByCampaignIdService } from "@/services/departure.detail.service";
 import ErrorMessageModal from "@/app/components/credit-request/ErrorMessageModal"
+import { createLogRecord } from "@/services/log.record.service";
 
 export default function CreditRequest ({ params }: { params: { id: string }}) {
 
   const [toggleCreate, setToggleCreate] = useState(false)
   const [modalErrorMessageIsOpen, setModalErrorMessageIsOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [recordId, setRecordId] = useState('')
 
   useEffect(() => {
     listDepatureDetailByCampaignIdService({
@@ -27,6 +29,22 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       })
   }, [])
   
+  const onClickHandle = async () => {
+    if(errorMessage !== '') {
+      setModalErrorMessageIsOpen(true), 
+      setToggleCreate(false)
+    } else {
+      setToggleCreate(!toggleCreate)
+      const initRequestTime = new Date()
+      const { recordId } = await createLogRecord({
+        resource: 'create-credit-request',
+        method: 'POST',
+        initRequestTime
+      })
+      setRecordId(recordId)
+    }
+  }
+
   return (
     <div className="mx-auto sm:px-6 lg:px-8">
       <ErrorMessageModal
@@ -38,10 +56,7 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       <div className="flex flex-row">
         <Button
           className="text-white mb-6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-          onClick={() => {
-            setToggleCreate(!toggleCreate)
-            if(errorMessage !== '') {setModalErrorMessageIsOpen(true), setToggleCreate(false)} 
-          }}
+          onClick={onClickHandle}
         >
           {
             toggleCreate
@@ -57,7 +72,7 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       </div>
       {
         toggleCreate
-          ? <CreateCreditRequest campaignId={params.id} setToggleCreate={setToggleCreate}/>   
+          ? <CreateCreditRequest campaignId={params.id} setToggleCreate={setToggleCreate} recordId={recordId}/>   
           : <CreditRequestTable campaignId={params.id}/>
       }
     </div>
