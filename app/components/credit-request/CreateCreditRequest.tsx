@@ -11,10 +11,12 @@ import ErrorMessageModal from "./ErrorMessageModal"
 
 export default function CreateCreditRequest ({
   campaignId, 
-  setToggleCreate 
+  setToggleCreate,
+  recordId
 }:{ 
   campaignId: string, 
-  setToggleCreate: Dispatch<SetStateAction<boolean>> 
+  setToggleCreate: Dispatch<SetStateAction<boolean>>,
+  recordId: string
 }) {
   
   const [departureDetailList, setDepartureDetailList] = useState<{
@@ -129,8 +131,8 @@ export default function CreateCreditRequest ({
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     
-    const creditRequestData = {... creditRequest, campaignId}
-
+    const creditRequestData = {... creditRequest, campaignId, recordId}
+    
     createCreditRequestService(creditRequestData)
     .then(response => {
       console.log(response)

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { checkAuthorization } from './check.authorization.service'
+import { setEndRequestTimeByLogRecordId } from './log.record.service'
 
 export async function listCreditRequestService ({ 
   campaignId,
@@ -158,7 +159,8 @@ export async function createCreditRequestService ({
   guaranteeDescription,
   guaranteeAmount,
   technicalId,
-  creditRequestObservation
+  creditRequestObservation,
+  recordId
 }: {
   farmerId: string,
   campaignId: string,
@@ -168,7 +170,8 @@ export async function createCreditRequestService ({
   guaranteeDescription: string,
   guaranteeAmount: number,
   technicalId: number,
-  creditRequestObservation: string
+  creditRequestObservation: string,
+  recordId: string
 }): Promise<{
   creditRequestId: string,
   farmerId: string,
@@ -204,6 +207,12 @@ export async function createCreditRequestService ({
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
+    })
+    
+    const endRequestTime = new Date()
+    await setEndRequestTimeByLogRecordId({
+      recordId,
+      endRequestTime
     })
     
     return response.data.data
