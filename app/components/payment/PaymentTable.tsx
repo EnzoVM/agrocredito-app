@@ -2,24 +2,22 @@
 
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
-import DeliveryTableSkeleton from "./DeliveryTableSkeleton"
+import PaymentTableSkeleton from "./PaymentTableSkeleton"
 import moment from 'moment'
 import 'moment/locale/es'
-import { listDeliveriesService } from "@/services/delivery.service"
-import DeliveryGeneralReportGenerator from "./DeliveryGeneralReportGenerator"
+import PaymentGeneralReportGenerator from "./PaymentGeneralReportGenerator"
+import { listPaymentsService } from "@/services/payment.service"
 
-export default function DeliveryTable({ campaignId }: { campaignId: string }) {
-  const [deliveries, serDeliveries] = useState<{
-    deliveryId: number
-    campaignId: string
-    fullNames?: string
+export default function PaymentTable({ campaignId }: { campaignId: string }) {
+  const [payments, setPayments] = useState<{
+    paymentId: number
     socialReason?: string
-    deliveryDateTime: Date
-    providerDescription: string
+    fullNames?: string
+    paymentDateTime: Date
     financialSourceDescription: string
     currentAccountDescription: string
-    gloss: string
-    deliveryAmount: number
+    paymentDescription: string
+    paymentAmount: number
   }[]>([])
 
   const [filters, setFilters] = useState<{
@@ -51,7 +49,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
 
   useEffect(() => {
     setIsLoadding(true)
-    listDeliveriesService({
+    listPaymentsService({
       campaignId,
       farmerType: filters.farmerType,
       fullNames: filters.fullNames,
@@ -60,8 +58,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
       limit: filters.limit
     })
       .then(response => {
-        console.log(response.deliveries)
-        serDeliveries(response.deliveries)
+        setPayments(response.payments)
         setTotalAmount(response.totalAmount)
         setTotalNumberOfDeliveries(response.count)
         setIsLoadding(false)
@@ -149,7 +146,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
               <option value="Individual">Individual</option>
               <option value="Asociación">Asociación</option>
             </select>
-            <DeliveryGeneralReportGenerator campaignId={campaignId} />
+            <PaymentGeneralReportGenerator campaignId={campaignId} />
           </div>
           <label className="sr-only">Buscar</label>
           <div className="relative">
@@ -174,7 +171,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                   type="text"
                   id="table-search"
                   className="mr-4 block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-96 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Buscar entrega por nombre o razón social"
+                  placeholder="Buscar abono por nombre o razón social"
                   onChange={handlerChange}
                 />
                 <Button
@@ -191,7 +188,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3 text-center">
-                CODIGO DE ENTREGA
+                CODIGO DE ABONO
               </th>
               <th scope="col" className="px-6 py-3 text-center">
                 {
@@ -199,10 +196,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                 }
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                FECHA DE LA ENTREGA
-              </th>
-              <th scope="col" className="px-6 py-3 text-center">
-                PROVEEDOR
+                FECHA DEL ABONO
               </th>
               <th scope="col" className="px-6 py-3 text-center">
                 FUENTE FINANCIERA
@@ -211,10 +205,10 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                 CUENTA CORRIENTE
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                GLOSA
+                DESCRIPCIÓN
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                MONTO ENTREGADO
+                MONTO ABONADO
               </th>
             </tr>
           </thead>
@@ -222,7 +216,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
             {
               isLoadding
               ?
-                <DeliveryTableSkeleton />
+                <PaymentTableSkeleton />
               :
                 totalNumberOfDeliveries === 0
                 ?
@@ -230,21 +224,20 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                       No se encontraron resultados.
                   </div>
                 :
-                  deliveries.map(delivery => (
-                    <tr key={delivery.deliveryId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  payments.map(payments => (
+                    <tr key={payments.paymentId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center"
                       >
-                        {delivery.deliveryId}
+                        {payments.paymentId}
                       </th>
-                      <td className="px-6 py-4 text-center">{delivery.fullNames ? delivery.fullNames : delivery.socialReason}</td>
-                      <td className="px-6 py-4 text-center">{moment(delivery.deliveryDateTime).format('LL')}</td>
-                      <td className="px-6 py-4 text-center">{delivery.providerDescription}</td>
-                      <td className="px-6 py-4 text-center">{delivery.financialSourceDescription}</td>
-                      <td className="px-6 py-4 text-center">{delivery.currentAccountDescription}</td>
-                      <td className="px-6 py-4 text-center">{delivery.gloss}</td>
-                      <td className="px-6 py-4 text-center">${delivery.deliveryAmount}</td>
+                      <td className="px-6 py-4 text-center">{payments.fullNames ? payments.fullNames : payments.socialReason}</td>
+                      <td className="px-6 py-4 text-center">{moment(payments.paymentDateTime).format('LL')}</td>
+                      <td className="px-6 py-4 text-center">{payments.financialSourceDescription}</td>
+                      <td className="px-6 py-4 text-center">{payments.currentAccountDescription}</td>
+                      <td className="px-6 py-4 text-center">{payments.paymentDescription}</td>
+                      <td className="px-6 py-4 text-center">${payments.paymentAmount}</td>
                     </tr>
                   ))
             }
