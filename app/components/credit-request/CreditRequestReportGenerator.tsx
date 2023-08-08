@@ -50,10 +50,12 @@ export default function CreditRequestReportGenerator ({ creditRequestId }: { cre
     getCreditRequestService({ creditRequestId })
     .then(response => {
       setCreditRequestDetail(response)
-      setEndRequestTime(new Date())
     })
     .catch(error => {
       console.log(error)
+    })
+    .finally(() => {
+      setEndRequestTime(new Date())
     })
   }, [creditRequestId])
 

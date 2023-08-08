@@ -36,7 +36,7 @@ export default function Login() {
     if (isLoged) {
       setCookie('refreshToken', tokens.refreshToken)
       setCookie('accessToken', tokens.accessToken)
-      return router.push('/home/campaign')
+      router.push('/home/campaign')
     } else {
       setAuthFailed(true)
       setIsLoading(false)
