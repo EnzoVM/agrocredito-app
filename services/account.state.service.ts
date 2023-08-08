@@ -3,6 +3,7 @@ import { checkAuthorization } from './check.authorization.service'
 import { createLogRecord, setEndRequestTimeByLogRecordId } from './log.record.service'
 
 export interface AccountStatusModel {
+  campaignFinishDate: string
   amountDelivered: number
   amountDeliveredPercentage: number
   creditAmount: number
@@ -12,12 +13,18 @@ export interface AccountStatusModel {
   delinquentInterestPercentage: number
   totalPayment: number
   finalDebt: number
-  payments: Payment[]
+  payments: Payment[],
+  deliveries: Delivery[]
 }
 
 interface Payment {
   transactionDateTime: Date,
   paymentAmount: number
+}
+
+interface Delivery {
+  deliveryDateTime: Date,
+  deliveryAmount: number
 }
 
 export async function getAccountState ({ creditRequestId }: { creditRequestId: string }): Promise<AccountStatusModel> {
