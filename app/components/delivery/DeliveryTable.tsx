@@ -239,7 +239,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                         {delivery.deliveryId}
                       </th>
                       <td className="px-6 py-4 text-center">{delivery.fullNames ? delivery.fullNames : delivery.socialReason}</td>
-                      <td className="px-6 py-4 text-center">{moment(delivery.deliveryDateTime).format('LLLL')}</td>
+                      <td className="px-6 py-4 text-center">{moment(delivery.deliveryDateTime).format('LL')}</td>
                       <td className="px-6 py-4 text-center">{delivery.providerDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.financialSourceDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.currentAccountDescription}</td>
