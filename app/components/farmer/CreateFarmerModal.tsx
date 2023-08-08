@@ -223,8 +223,8 @@ export default function CreateFarmerModal ({ modalFormIsOpen, setModalFormIsOpen
       return setCreateFailed('Debe ingresa un DNI con 8 dígitos')
     } 
     
-    if (ruc && ruc.length !== 10) {
-      return setCreateFailed('Debe ingresa un RUC con 10 dígitos')
+    if (ruc && ruc.length !== 11) {
+      return setCreateFailed('Debe ingresa un RUC con 11 dígitos')
     }
 
     const farmerToSave = {
@@ -372,7 +372,7 @@ export default function CreateFarmerModal ({ modalFormIsOpen, setModalFormIsOpen
                   <div className="flex justify-between">
                     <div className="mb-6 w-full mr-4">
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">RUC:</label>
-                      <input type="number" name="ruc" ref={rucValue} maxLength={10} className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="1234567890" required />
+                      <input type="number" name="ruc" ref={rucValue} maxLength={11} className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" placeholder="1234567890" required />
                     </div>
                     <div className="mb-6 w-full">
                       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cantidad de hectáreas:</label>
