@@ -36,10 +36,12 @@ export default function DeliveryGeneralReportGenerator ({ campaignId }: { campai
     })
       .then(response => {
         serDeliveries(response.deliveries)
-        setEndRequestTime(new Date())
-        setFinishLoadPDFData(true)
       })
       .catch(error => console.log(error))
+      .finally(() => {
+        setFinishLoadPDFData(true)
+        setEndRequestTime(new Date())
+      })
   }, [campaignId])
 
   const getMinutesAndRegisterNewLog = async () => {

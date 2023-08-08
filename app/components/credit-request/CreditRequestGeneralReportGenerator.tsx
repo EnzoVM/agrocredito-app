@@ -35,10 +35,12 @@ export default function CreditRequestGeneralReportGenerator ({ campaignId }: { c
     })
       .then(response => {
         setCreditRequestsReport(response.creditRequests)
-        setEndRequestTime(new Date())
-        setFinishLoadPDFData(true)
       })
       .catch(error => console.log(error))
+      .finally(() => {
+        setFinishLoadPDFData(true)
+        setEndRequestTime(new Date())
+      })
   }, [campaignId])
 
   const getMinutesAndRegisterNewLog = async () => {
