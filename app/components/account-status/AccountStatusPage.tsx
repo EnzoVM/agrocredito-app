@@ -1,10 +1,12 @@
 import { AccountStatusModel, getAccountState } from "@/services/account.state.service";
-import { createLogRecord, setEndRequestTimeByLogRecordId } from "@/services/log.record.service";
 import moment from "moment";
 import { useEffect, useState } from "react";
 
 export default function AccountSatusPage ({ creditRequestId }: { creditRequestId: string }) {
+  const [errorMessage, setErrorMessage] = useState('')
+
   const [accountStateData, setAccountStateData] = useState<AccountStatusModel>({
+    campaignFinishDate: '',
     amountDelivered: 0,
     amountDeliveredPercentage: 0,
     creditAmount: 0,
@@ -14,91 +16,144 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
     interest: 0,
     interesPercentage: 0,
     payments: [],
+    deliveries: [],
     totalPayment: 0
   })
 
   useEffect(() => {
     getAccountState({ creditRequestId })
       .then(response => {
-        console.log(response)
         setAccountStateData(response)
       })
       .catch(error => {
-        console.log(error)
+        setErrorMessage(error.message)
       })
   }, [creditRequestId])
 
   return (
     <div className="block w-full p-6 bg-white border border-gray-700 rounded-lg dark:bg-gray-800">
       <h5 className="text-2xl mb-4 font-bold tracking-tight text-gray-900 dark:text-white">Estado de cuenta del crédito:</h5>
-      <div className="container px-32 pt-4">
-        <div className="">
-          <div className="w-full h-4 mb-4 bg-gray-200 rounded-full dark:bg-gray-700">
-            <div className="h-4 bg-blue-600 rounded-full dark:bg-blue-500" style={{width: `${accountStateData.amountDeliveredPercentage}%`}}></div>
-          </div>
-          <div className="text-center">
-            <p className="text-md tracking-tight text-gray-900 dark:text-white">Monto entregado:</p>
-            <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.amountDelivered} ({accountStateData.amountDeliveredPercentage}%)</p>
-          </div>
-        </div>
-        <div className="pt-4">
-          <div className="dark:bg-gray-600 rounded-md">
-            <div className="flex justify-between px-12 pt-4 pb-2">
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">Total de crédito aprobado:</p>
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.creditAmount}</p>
-            </div>
-            <div className="flex justify-between px-12 py-2">
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés ({accountStateData.interesPercentage}%):</p>
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.interest}</p>
-            </div>
-            <div className="flex justify-between px-12 py-2">
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés moratorio ({accountStateData.delinquentInterestPercentage}%):</p>
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.delinquentInterest}</p>
-            </div>
-            <div className="flex justify-between px-12 py-2">
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">Total abonado:</p>
-              <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.totalPayment}</p>
-            </div>
-            <div className="grid grid-cols-1 divide-y">
-              <div></div>
-              <div className="flex justify-between px-12 pb-4 pt-2">
-                <p className="text-md tracking-tight text-gray-900 dark:text-white">Deuda actual:</p>
-                <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.finalDebt}</p>
+      {
+        errorMessage === ''
+          ? <div className="container px-12 pt-4">
+              <div className="">
+                <div className="w-full h-4 mb-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                  <div className="h-4 bg-blue-600 rounded-full dark:bg-blue-500" style={{width: `${accountStateData.amountDeliveredPercentage}%`}}></div>
+                </div>
+                <div className="flex justify-between direction-row">
+                  <div className="text-center">
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">Monto entregado:</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.amountDelivered} ({accountStateData.amountDeliveredPercentage}%)</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">Fecha de vencimiento:</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">{accountStateData.campaignFinishDate}</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <table className="w-full mt-4 text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                <div className="text-center">
-                  Fecha de abono
-                </div>
-              </th>
-              <th scope="col text-center" className="px-6 py-3">
-                <div className="text-center">
-                  Monto abonado
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              accountStateData.payments.map(payment => (
-                <tr key={`${payment.paymentAmount}_${new Date().toUTCString()}`} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <td className="px-6 py-4">{moment(payment.transactionDateTime).format('LLLL')}</td>
-                  <td className="px-6 py-4">
-                    <div className="text-center">
-                      ${payment.paymentAmount}
+              <div className="pt-4 flex direction-row">
+                <div className="dark:bg-gray-600 w-1/2 mr-2 rounded-md">
+                  <div className="flex justify-between px-6 pt-4 pb-2">
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">Total de crédito aprobado:</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.creditAmount}</p>
+                  </div>
+                  <div className="flex justify-between px-6 py-2">
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés ({accountStateData.interesPercentage}%):</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.interest}</p>
+                  </div>
+                  <div className="flex justify-between px-6 py-2">
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés moratorio ({accountStateData.delinquentInterestPercentage}%):</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.delinquentInterest}</p>
+                  </div>
+                  <div className="flex justify-between px-6 py-2">
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">Total abonado:</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.totalPayment}</p>
+                  </div>
+                  <div className="grid grid-cols-1 divide-y">
+                    <div></div>
+                    <div className="flex justify-between px-6 pb-4 pt-2">
+                      <p className="text-md tracking-tight text-gray-900 dark:text-white">Deuda actual:</p>
+                      <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.finalDebt}</p>
                     </div>
-                  </td>     
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
+                  </div>
+                </div>
+                <div className="w-1/2">
+                  <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr>
+                        <th scope="col" className="px-6 py-3">
+                          <div className="text-center">
+                            Fecha de entrega
+                          </div>
+                        </th>
+                        <th scope="col text-center" className="px-6 py-3">
+                          <div className="text-center">
+                            Monto de entrega
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        accountStateData.deliveries.map(delivery => (
+                          <tr key={`${delivery.deliveryAmount}_${new Date().toUTCString()}`} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <td className="px-6 py-4">
+                              <div className="text-center">
+                                {moment(delivery.deliveryDateTime).format('LLLL')}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-center">
+                                ${delivery.deliveryAmount}
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <table className="w-full mt-4 text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      <div className="text-center">
+                        Fecha de abono
+                      </div>
+                    </th>
+                    <th scope="col text-center" className="px-6 py-3">
+                      <div className="text-center">
+                        Monto abonado
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    accountStateData.payments.map(payment => (
+                      <tr key={`${payment.paymentAmount}_${new Date().toUTCString()}`} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <td className="px-6 py-4">
+                          <div className="text-center">
+                            {moment(payment.transactionDateTime).format('LLLL')}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-center">
+                            ${payment.paymentAmount}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+          : <div className="">
+            {errorMessage}
+          </div>
+      }
+      
     </div>
   )
 }
