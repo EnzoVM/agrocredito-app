@@ -48,6 +48,17 @@ export default function Sidebar ({campaignId}: Props) {
                 <span className="ml-3">Gestión de entregas</span>
               </Link>
             </li>
+            <li>
+               <Link
+                  href={`/home/campaign/${campaignId.id}/payment`}
+                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/>
+                </svg>
+                <span className="ml-3">Gestión de abonos</span>
+              </Link>
+            </li>
           </ul>
       </div>
     </aside>

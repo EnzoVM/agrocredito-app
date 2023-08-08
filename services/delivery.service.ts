@@ -28,7 +28,8 @@ export async function listDeliveriesService ({
       gloss: string
       deliveryAmount: number
     }[], 
-    count: number
+    count: number,
+    totalAmount: number
   }> {
   try {
 
