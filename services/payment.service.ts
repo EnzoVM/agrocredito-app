@@ -57,3 +57,49 @@ export async function listPaymentsService ({
     throw new Error(error.response.data.message)
   }
 }
+
+export async function createPaymentsService ({
+  creditRequestId,
+  paymentDateTime,
+  financialSourceId,
+  currentAccountId,
+  paymentDescription,
+  paymentAmountPEN,
+  exchangeRate
+}:{
+  creditRequestId: string
+  paymentDateTime: string
+  financialSourceId: number
+  currentAccountId: number
+  paymentDescription: string
+  paymentAmountPEN: number
+  exchangeRate: number
+}): Promise<string> {
+  try {
+
+    const { isLoged, accessToken } = await checkAuthorization()
+
+    if (!isLoged) {
+      throw new Error('You have to login again')
+    }
+    
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/payments`, {
+      creditRequestId,
+      paymentDateTime,
+      financialSourceId,
+      currentAccountId,
+      paymentDescription,
+      paymentAmountPEN,
+      exchangeRate
+    }, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    
+    return response.data.message
+
+  } catch (error: any) {
+    throw new Error(error.response.data.message)
+  }
+}

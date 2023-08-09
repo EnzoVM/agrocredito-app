@@ -1,14 +1,13 @@
 import { listCurrentAccountService } from "@/services/current.account.service"
 import { listFinancialSourceService } from "@/services/financial.source.service"
-import { listProviderService } from "@/services/provider.service"
 import { ChangeEvent, Dispatch, FormEvent, SetStateAction, use, useEffect, useState } from "react"
 import FarmerListModal from "../credit-request/FarmerListModal"
 import ErrorMessageModal from "../credit-request/ErrorMessageModal"
 import { Button } from "flowbite-react"
 import moment from "moment"
-import { countDeliveriesByCreditRequestIdService, createDeliveryService } from "@/services/delivery.service"
+import { createPaymentsService } from "@/services/payment.service"
 
-export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignId: string, setToggleCreate: Dispatch<SetStateAction<boolean>>}) {
+export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId: string, setToggleCreate: Dispatch<SetStateAction<boolean>>}) {
   
   const [currentAccountList, setCurrentAccountList] = useState<{
     currentAccountId: number, 
@@ -20,32 +19,27 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
     financialSourceDescription: string
   }[]>([])
 
-  const [providerList, setProviderList] = useState<{
-    providerId: number, 
-    providerDescription: string
-  }[]>([])
-
   const [creditRequestApprovedList, setCreditRequestApprovedList] = useState<{
     creditRequestId: string
     creditAmount: number,
     createDateTime: string
   }[]>([])
 
-  const [delivery, setDelivery] = useState<{
-    creditRequestId: string,
-    deliveryDatetime: string,
-    providerId: number,
-    financialSourceId: number,
-    currentAccountId: number,
-    gloss: string,
+  const [payment, setPayment] = useState<{
+    creditRequestId: string
+    paymentDateTime: string
+    financialSourceId: number
+    currentAccountId: number
+    paymentDescription: string
+    paymentAmountPEN: number
     exchangeRate: number
   }>({
     creditRequestId: '',
-    deliveryDatetime: '',
-    providerId: 0,
+    paymentDateTime: '',
     financialSourceId: 0,
     currentAccountId: 0,
-    gloss: '',
+    paymentDescription: '',
+    paymentAmountPEN: 0,
     exchangeRate: 0
   })
 
@@ -53,8 +47,8 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
   const [modalErrorMessageIsOpen, setModalErrorMessageIsOpen] = useState(false)
   const [farmer, setFarmer] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-  const [deliveryAmountUSD, setDeliveryAmountUSD] = useState('')
-  const [deliveryAmountPEN, setDeliveryAmountPEN] = useState('')
+  const [paymentAmountUSD, setPaymentAmountUSD] = useState('')
+  const [paymentAmountPEN, setPaymentAmountPEN] = useState(0)
   const [exchangeRateValue, setExchangeRateValue] = useState(0)
   
   useEffect(() => {
@@ -71,80 +65,62 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
         setFinancialSourceList(response)
       })
       .catch(error => console.log(error.message))
-    
-    listProviderService()
-      .then(response => {
-        console.log(response)
-        setProviderList(response)
-      })
-      .catch(error => console.log(error.message))
   }, [])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) => {
     if(
-      event.target.name === 'providerId' ||
       event.target.name === 'financialSourceId' ||
       event.target.name === 'currentAccountId'
     ) {
-      setDelivery({
-        ... delivery,
+      setPayment({
+        ... payment,
         [event.target.name]: Number(event.target.value)
       })
     } else {
-      setDelivery({
-        ... delivery,
+      setPayment({
+        ... payment,
         [event.target.name]: event.target.value
       })
     }
   }
   
-  const handleDeliveryAmount = async (event: ChangeEvent<HTMLSelectElement>) => {
-    const creditRequestId = event.target.value
-    const deliveryAmount = event.target.options[event.target.selectedIndex].getAttribute('data-value2')
+  const handleSetAmountPEN = (event: ChangeEvent<HTMLInputElement>) => {
+    const amountPEN: number = Number(event.target.value)
+    setPaymentAmountPEN(amountPEN)
     
     let amountUSD: number = 0
-    const numOfDeliveries = await countDeliveriesByCreditRequestIdService({creditRequestId})
-    if(numOfDeliveries === 0){
-      amountUSD = Number(deliveryAmount)*0.80
+    if(exchangeRateValue !== 0){
+      amountUSD = amountPEN/exchangeRateValue
     }
-    if(numOfDeliveries === 1){
-      amountUSD = Number(deliveryAmount)*0.20
-    }
-    if(numOfDeliveries >= 2){
-      event.target.value=''
-      setErrorMessage('Ya sobrepaso el limite de entrgas para la solicitud de credito especificada')
-      setModalErrorMessageIsOpen(true)
-    }
-
-    setDeliveryAmountUSD(amountUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD'}))
-    const amountPEN = amountUSD*exchangeRateValue
-    setDeliveryAmountPEN(amountPEN.toLocaleString('es-PE', { style: 'currency', currency: 'PEN'}))
-    setDelivery({... delivery, creditRequestId})
+    setPaymentAmountUSD(amountUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD'}))
+    setPayment({... payment, paymentAmountPEN: amountPEN})
   }
 
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
-    const exchangeRate = Number(event.target.value)
-    const amountUSD = parseFloat(deliveryAmountUSD.replace(/[^\d.-]/g, ''))
-    const amountPEN = amountUSD*exchangeRate
-
-    setDeliveryAmountPEN(amountPEN.toLocaleString('es-PE', { style: 'currency', currency: 'PEN'}))
+    const exchangeRate: number = Number(event.target.value)
     setExchangeRateValue(exchangeRate)
-    setDelivery({... delivery, exchangeRate})
+    
+    let amountUSD: number = 0
+    if(exchangeRate !== 0){
+      amountUSD = paymentAmountPEN/exchangeRate
+    }
+    setPaymentAmountUSD(amountUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD'})) 
+    setPayment({... payment, exchangeRate})
   }
   
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
-    createDeliveryService(delivery)
-      .then(response => {
-        console.log(response)
-        setToggleCreate(false)
-      })
-      .catch(error => {
-        console.log(error.message)
-        setErrorMessage(error.message)
-        setModalErrorMessageIsOpen(true)
-      })
+    
+    createPaymentsService(payment)
+    .then(response => {
+      console.log(response)
+      setToggleCreate(false)
+    })
+    .catch(error => {
+      console.log(error.message)
+      setErrorMessage(error.message)
+      setModalErrorMessageIsOpen(true)
+    })
   }
 
   return(
@@ -155,8 +131,6 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
       setFarmer={setFarmer}
       campaignId={campaignId}
       setCreditRequestApprovedList={setCreditRequestApprovedList}
-      setDeliveryAmountPEN={setDeliveryAmountPEN}
-      setDeliveryAmountUSD={setDeliveryAmountUSD}
       />
       <ErrorMessageModal
       modalErrorMessageIsOpen={modalErrorMessageIsOpen}
@@ -187,11 +161,11 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
                 </div>
                 <div className="mb-6 w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Créditos aprobados:</label>
-                  <select onChange={handleDeliveryAmount} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                  <select name="creditRequestId" onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                     <option value="">Elegir tipo</option>
                     {
                       creditRequestApprovedList.map(creditApproved => (
-                        <option key={creditApproved.creditRequestId} value={creditApproved.creditRequestId} data-value2={creditApproved.creditAmount}>Credito - $/{creditApproved.creditAmount} - {moment(creditApproved.createDateTime).format('LLLL')}</option>
+                        <option key={creditApproved.creditRequestId} value={creditApproved.creditRequestId}>Credito - $/{creditApproved.creditAmount} - {moment(creditApproved.createDateTime).format('LL')}</option>
                       ))
                     }
                   </select>
@@ -199,14 +173,14 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
               </div>
               <div className="flex justify-between">   
                 <div className="mb-6 w-full mr-4">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en dolares ($):</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en soles (S/):</label>
                   <input
-                    type="text"
-                    placeholder="Monto de la entrega en dolares" 
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 cursor-not-allowed focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={deliveryAmountUSD}
+                    type="number"
+                    placeholder="Monto de la entrega en soles" 
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    onChange={handleSetAmountPEN}
+                    step="0.01"
                     required
-                    disabled
                   />
                 </div>
                 <div className="mb-6 w-full">
@@ -223,12 +197,12 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
               </div>
               <div className="flex justify-between"> 
                 <div className="mb-6 w-full mr-4">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en soles (S/):</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en dolares ($/):</label>
                   <input
                     type="text"
-                    placeholder="Monto de la entrega en soles" 
+                    placeholder="Monto de la entrega en dolares"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 cursor-not-allowed focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                    value={deliveryAmountPEN}
+                    value={paymentAmountUSD}
                     required
                     disabled
                   />
@@ -237,9 +211,9 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha de entrega:</label>
                   <input
                     type="date"
-                    placeholder="Ingrese el objeto del prestamo" 
+                    placeholder="Ingrese la fecha correspondiente" 
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                    name="deliveryDatetime"
+                    name="paymentDateTime"
                     onChange={handleChange}
                     required
                   />
@@ -247,17 +221,6 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
               </div>
               <div className="flex justify-between">
                 <div className="mb-6 w-full mr-4">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Proveedor:</label>
-                  <select name='providerId' onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                    <option value="">Elegir proveedor</option>
-                    {
-                      providerList.map(provider => (
-                        <option key={provider.providerId} value={provider.providerId}>{provider.providerDescription}</option>
-                      ))
-                    }
-                  </select>
-                </div> 
-                <div className="mb-6 w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fuente financiera:</label>
                   <select name='financialSourceId' onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                     <option value="">Elegir fuente</option>
@@ -268,9 +231,7 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
                     }
                   </select>
                 </div>
-              </div>
-              <div className="flex justify-between">
-                <div className="mb-6 w-full mr-4">
+                <div className="mb-6 w-full">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cuenta corriente:</label>
                   <select name='currentAccountId' onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                     <option value="">Elegir cuenta</option>
@@ -281,13 +242,15 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
                     }
                   </select>
                 </div>  
+              </div>
+              <div className="flex justify-between">
                 <div className="mb-6 w-full">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Glosa:</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descripción del abono:</label>
                   <input
                     type="text"
                     placeholder="Ingrese la glosa de la entrega" 
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                    name="gloss"
+                    name="paymentDescription"
                     onChange={handleChange}
                     required
                   />

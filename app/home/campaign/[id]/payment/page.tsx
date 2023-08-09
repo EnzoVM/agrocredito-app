@@ -2,7 +2,7 @@
 
 import PaymentTable from "@/app/components/payment/PaymentTable";
 import { useState } from "react";
-import CreateDelivery from "@/app/components/delivery/CreateDelivery"
+import CreatePayment from "@/app/components/payment/CreatePayment";
 
 export default function Delivery({ params }: { params: { id: string } }) {
   const [toggleCreate, setToggleCreate] = useState(false);
@@ -54,7 +54,7 @@ export default function Delivery({ params }: { params: { id: string } }) {
         </nav>
       </div>
       {toggleCreate ? (
-        <CreateDelivery campaignId={params.id} setToggleCreate={setToggleCreate} />
+        <CreatePayment campaignId={params.id} setToggleCreate={setToggleCreate}/>
       ) : (
         <PaymentTable campaignId={params.id} />
       )}
