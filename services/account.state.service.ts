@@ -3,18 +3,30 @@ import { checkAuthorization } from './check.authorization.service'
 import { createLogRecord, setEndRequestTimeByLogRecordId } from './log.record.service'
 
 export interface AccountStatusModel {
-  campaignFinishDate: string
-  amountDelivered: number
-  amountDeliveredPercentage: number
-  creditAmount: number
-  interest: number
-  interesPercentage: number
-  delinquentInterest: number
-  delinquentInterestPercentage: number
-  totalPayment: number
-  finalDebt: number
-  payments: Payment[],
-  deliveries: Delivery[]
+  campaignFinishDate: '',
+  amountDelivered: 0,
+  amountDeliveredPercentage: 0,
+  creditAmount: 0,
+  delinquentInterest: 0,
+  delinquentInterestPercentage: 0,
+  finalDebt: 0,
+  interest: 0,
+  interesPercentage: 0,
+  payments: {
+    transactionDateTime: Date,
+    paymentAmount: number
+  }[],
+  deliveries: {
+    deliveryDateTime: Date, deliveryAmount: number
+  }[],
+  totalPayment: 0,
+  farmerData: {
+    farmerId: string,
+    fullName?: string,
+    socialReason?: string,
+  }
+  campaignId: string,
+  creditRequesId: string
 }
 
 interface Payment {
@@ -27,7 +39,7 @@ interface Delivery {
   deliveryAmount: number
 }
 
-export async function getAccountState ({ creditRequestId }: { creditRequestId: string }): Promise<AccountStatusModel> {
+export async function getAccountState ({ creditRequestId, take }: { creditRequestId: string, take?: number }): Promise<AccountStatusModel> {
   try {
     const { isLoged, accessToken } = await checkAuthorization()
 
@@ -43,7 +55,7 @@ export async function getAccountState ({ creditRequestId }: { creditRequestId: s
       initRequestTime
     })
 
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/account-status/${creditRequestId}`, {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/account-status/${creditRequestId}/${take}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
