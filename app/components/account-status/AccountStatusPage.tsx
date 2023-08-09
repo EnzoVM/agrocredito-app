@@ -1,6 +1,7 @@
 import { AccountStatusModel, getAccountState } from "@/services/account.state.service";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import AccountSatusReportGenerator from "./AccountSatusReportGenerator";
 
 export default function AccountSatusPage ({ creditRequestId }: { creditRequestId: string }) {
   const [errorMessage, setErrorMessage] = useState('')
@@ -17,11 +18,16 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
     interesPercentage: 0,
     payments: [],
     deliveries: [],
-    totalPayment: 0
+    totalPayment: 0,
+    farmerData: {
+      farmerId: ''
+    },
+    campaignId: '',
+    creditRequesId: ''
   })
 
   useEffect(() => {
-    getAccountState({ creditRequestId })
+    getAccountState({ creditRequestId, take: 7 })
       .then(response => {
         setAccountStateData(response)
       })
@@ -32,7 +38,10 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
 
   return (
     <div className="block w-full p-6 bg-white border border-gray-700 rounded-lg dark:bg-gray-800">
-      <h5 className="text-2xl mb-4 font-bold tracking-tight text-gray-900 dark:text-white">Estado de cuenta del crédito:</h5>
+      <div className="flex direction-row justify-between">
+        <h5 className="text-2xl mb-4 font-bold tracking-tight text-gray-900 dark:text-white">Estado de cuenta del crédito:</h5>
+        <AccountSatusReportGenerator creditRequestId={creditRequestId} />
+      </div>
       {
         errorMessage === ''
           ? <div className="container px-12 pt-4">
