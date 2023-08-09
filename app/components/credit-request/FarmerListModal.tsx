@@ -356,6 +356,16 @@ export default function FarmerListModal({
                                     setDeliveryAmountUSD('')
                                   })
                               }
+                              if(campaignId && setCreditRequestApprovedList){
+                                listApprovedCreditRequestByFarmerService({farmerId: farmer.farmerId, campaignId})
+                                  .then(response => {
+                                    console.log(response)
+                                    setCreditRequestApprovedList(response)
+                                  })
+                                  .catch(error => {
+                                    setCreditRequestApprovedList([])
+                                  })
+                              }
                               let farmerName = filters.farmerType === 'Individual' ? farmer.fullNames : farmer.socialReason
                               setFarmer(farmer.farmerId+' - '+farmerName)
                               setModalFormIsOpen(false)
