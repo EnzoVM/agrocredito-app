@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
 import Link from "next/link"
@@ -10,6 +11,7 @@ import 'moment/locale/es'
 import CreditRequestReportGenerator from "./CreditRequestReportGenerator"
 
 export default function CreditRequestTable({ campaignId }: { campaignId: string }) {
+  const router = useRouter()
   const [creditRequests, setCreditRequests] = useState<{
     creditRequestId: string
     campaignId: string
@@ -65,7 +67,11 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
         setTotalNumberOfCreditRequests(response.count)
         setIsLoadding(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        if (error.message === 'You have to login again') {
+          router.push('/login')
+        }
+      })
   }, [campaignId, filters])
 
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {

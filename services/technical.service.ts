@@ -26,6 +26,9 @@ export async function listTechnicalByAssistanceTypeService ({
     return response.data.data
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }

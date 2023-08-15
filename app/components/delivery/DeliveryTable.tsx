@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
 import DeliveryTableSkeleton from "./DeliveryTableSkeleton"
@@ -9,6 +10,7 @@ import { listDeliveriesService } from "@/services/delivery.service"
 import DeliveryGeneralReportGenerator from "./DeliveryGeneralReportGenerator"
 
 export default function DeliveryTable({ campaignId }: { campaignId: string }) {
+  const router = useRouter()
   const [deliveries, serDeliveries] = useState<{
     deliveryId: number
     campaignId: string
@@ -66,7 +68,11 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
         setTotalNumberOfDeliveries(response.count)
         setIsLoadding(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        if (error.message === 'You have to login again') {
+          router.push('/login')
+        }
+      })
   }, [campaignId, filters])
 
   const handlerChangeFarmerType = async (event: ChangeEvent<HTMLSelectElement>) => {

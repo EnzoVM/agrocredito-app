@@ -74,6 +74,9 @@ export async function listCreditRequestService ({
     
     return response.data.data
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -116,6 +119,9 @@ export async function getCreditRequestService ({
     
     return response.data.data
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -146,6 +152,9 @@ export async function updateCreditRequestStatusService ({
     
     return response.data.data
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -218,6 +227,9 @@ export async function createCreditRequestService ({
     return response.data.data
     
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -250,6 +262,9 @@ export async function listApprovedCreditRequestByFarmerService ({
     return response.data.data
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }

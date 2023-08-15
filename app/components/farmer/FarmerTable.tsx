@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
 import Link from "next/link"
@@ -10,6 +11,7 @@ import { listFarmerService } from "@/services/farmer.service"
 import { listProjectBySectorService } from "@/services/project.service"
 
 export default function FarmerTable() {
+  const router = useRouter()
   const [farmers, setFarmers] = useState<{
     farmerId: string
     farmerQualityDescription: string
@@ -73,7 +75,11 @@ export default function FarmerTable() {
         setTotalNumberOfCampaigns(response.count)
         setIsLoadding(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        if (error.message === 'You have to login again') {
+          router.push('/login')
+        }
+      })
   }, [filters])
 
   const changeProjectsBySectorHandler = async (event: ChangeEvent<HTMLSelectElement>) => {
