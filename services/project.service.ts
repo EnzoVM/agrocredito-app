@@ -59,6 +59,9 @@ export async function listProjectService (): Promise<{
     return response.data.data
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -86,6 +89,9 @@ export async function deleteProjectService ({
     return response.data.data
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -129,6 +135,9 @@ export async function listAllProjectService ({
     return response.data.data
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -160,6 +169,9 @@ export async function createProjectService ({
     return response.data.message
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }

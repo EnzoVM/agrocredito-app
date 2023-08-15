@@ -56,6 +56,9 @@ export async function listDeliveriesService ({
     
     return response.data.data
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -102,6 +105,9 @@ export async function createDeliveryService ({
     return response.data.message
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }
@@ -128,6 +134,9 @@ export async function countDeliveriesByCreditRequestIdService ({
     return response.data.data
 
   } catch (error: any) {
+    if (error.message === 'You have to login again') {
+      throw new Error('You have to login again')
+    }
     throw new Error(error.response.data.message)
   }
 }

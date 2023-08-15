@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import CreateCampaignModal from "./CreateCampaignModal";
 import DeleteCampaignModal from "./DeleteCampaignModal";
 import CampaignTableSkeleton from "./CampaignTableSkeleton";
@@ -9,7 +10,7 @@ import { useEffect, useState, ChangeEvent, FormEvent} from "react";
 import { listCampaignService } from "@/services/campaign.service"
 
 export default function CampaignTable() {
-
+  const router = useRouter()
   const [campaignList, setCampaignList] = useState<{
     campaignId: string;
     campaignDescription: string;
@@ -51,7 +52,11 @@ export default function CampaignTable() {
         setTotalNumberOfCampaigns(response.count)
         setIsLoadding(false)
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        if (error.message === 'You have to login again') {
+          router.push('/login')
+        }
+      })
   }, [filters])
 
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {

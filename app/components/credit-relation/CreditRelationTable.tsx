@@ -1,44 +1,41 @@
 "use client"
 
 import { useRouter } from "next/navigation";
+import Link from "next/link"
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
-import PaymentTableSkeleton from "./PaymentTableSkeleton"
-import moment from 'moment'
+import CreditRelationTableSkeleton from "./CreditRelationTableSkeleton"
 import 'moment/locale/es'
-import PaymentGeneralReportGenerator from "./PaymentGeneralReportGenerator"
-import { listPaymentsService } from "@/services/payment.service"
+import CreditRelationGeneralReportGenerator from "./CreditRelationGeneralReportGenerator"
+import { listCreditRelationsService } from "@/services/credit.relation.service"
 
-export default function PaymentTable({ campaignId }: { campaignId: string }) {
+export default function CreditRelationTable({ campaignId }: { campaignId: string }) {
   const router = useRouter()
-  const [payments, setPayments] = useState<{
-    paymentId: number
-    socialReason?: string
+  const [creditRelations, setCreditRelations] = useState<{
+    creditRequestId: string
+    farmerId: string
     fullNames?: string
-    paymentDateTime: Date
-    financialSourceDescription: string
-    currentAccountDescription: string
-    paymentDescription: string
-    paymentAmount: number
+    socialReason?: string
+    totalDelivery: number
+    totalInterest: number
+    capital: number
   }[]>([])
 
   const [filters, setFilters] = useState<{
     campaignId: string,
     farmerType: 'Individual' | 'Asociación',
-    fullNames?: string, 
-    socialReason?: string,
+    farmerFullNames?: string, 
+    farmerSocialReason?: string,
     page: number, 
     limit: number
   }>({
     campaignId: '',
-    fullNames: '',
-    socialReason: '',
+    farmerFullNames: '',
+    farmerSocialReason: '',
     farmerType: 'Individual',
     page: 1,
     limit: 6
   })
-
-  const [totalAmount, setTotalAmount] = useState(0)
 
   const [paginationSelected, setPaginationSelected] = useState(1)
   const [paginationNumbers, setPaginationNumbers] = useState<number[]>([1,2,3,4,5])
@@ -51,17 +48,16 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
 
   useEffect(() => {
     setIsLoadding(true)
-    listPaymentsService({
+    listCreditRelationsService({
       campaignId,
       farmerType: filters.farmerType,
-      fullNames: filters.fullNames,
-      socialReason: filters.socialReason,
+      farmerFullNames: filters.farmerFullNames,
+      farmerSocialReason: filters.farmerSocialReason,
       page: filters.page,
       limit: filters.limit
     })
       .then(response => {
-        setPayments(response.payments)
-        setTotalAmount(response.totalAmount)
+        setCreditRelations(response.creditRelations)
         setTotalNumberOfDeliveries(response.count)
         setIsLoadding(false)
       })
@@ -86,8 +82,8 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
     if(inputSearchFilter === ''){
       return setFilters({
         ...filters,
-        fullNames: '',
-        socialReason: '',
+        farmerFullNames: '',
+        farmerSocialReason: '',
         farmerType: 'Individual',
         page: 1,
         limit: 6
@@ -97,8 +93,8 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
     if(filters.farmerType === 'Individual'){
       return setFilters({
         ...filters, 
-        fullNames: inputSearchFilter, 
-        socialReason: '',
+        farmerFullNames: inputSearchFilter, 
+        farmerSocialReason: '',
         page: 1
       })
     }
@@ -106,8 +102,8 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
     if(filters.farmerType === 'Asociación'){
       return setFilters({
         ...filters, 
-        socialReason: inputSearchFilter, 
-        fullNames: '',
+        farmerSocialReason: inputSearchFilter, 
+        farmerFullNames: '',
         page: 1
       })
     }
@@ -152,7 +148,7 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
               <option value="Individual">Individual</option>
               <option value="Asociación">Asociación</option>
             </select>
-            <PaymentGeneralReportGenerator campaignId={campaignId} />
+            <CreditRelationGeneralReportGenerator campaignId={campaignId} />
           </div>
           <label className="sr-only">Buscar</label>
           <div className="relative">
@@ -194,7 +190,7 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3 text-center">
-                CODIGO DE ABONO
+                CODIGO DEL AGRICULTOR
               </th>
               <th scope="col" className="px-6 py-3 text-center">
                 {
@@ -202,19 +198,16 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
                 }
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                FECHA DEL ABONO
+                SALDO CAPITAL
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                FUENTE FINANCIERA
+                SALDO INTERES
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                CUENTA CORRIENTE
+                SALDO
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                DESCRIPCIÓN
-              </th>
-              <th scope="col" className="px-6 py-3 text-center">
-                MONTO ABONADO
+                MÁS INFORMACIÓN
               </th>
             </tr>
           </thead>
@@ -222,7 +215,7 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
             {
               isLoadding
               ?
-                <PaymentTableSkeleton />
+                <CreditRelationTableSkeleton />
               :
                 totalNumberOfDeliveries === 0
                 ?
@@ -230,28 +223,31 @@ export default function PaymentTable({ campaignId }: { campaignId: string }) {
                       No se encontraron resultados.
                   </div>
                 :
-                  payments.map(payments => (
-                    <tr key={payments.paymentId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  creditRelations.map(creditRelation => (
+                    <tr key={creditRelation.creditRequestId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-center"
                       >
-                        {payments.paymentId}
+                        {creditRelation.farmerId}
                       </th>
-                      <td className="px-6 py-4 text-center">{payments.fullNames ? payments.fullNames : payments.socialReason}</td>
-                      <td className="px-6 py-4 text-center">{moment(payments.paymentDateTime).format('LL')}</td>
-                      <td className="px-6 py-4 text-center">{payments.financialSourceDescription}</td>
-                      <td className="px-6 py-4 text-center">{payments.currentAccountDescription}</td>
-                      <td className="px-6 py-4 text-center">{payments.paymentDescription}</td>
-                      <td className="px-6 py-4 text-center">${payments.paymentAmount}</td>
+                      <td className="px-6 py-4 text-center">{creditRelation.fullNames ? creditRelation.fullNames : creditRelation.socialReason}</td>
+                      <td className="px-6 py-4 text-center">{creditRelation.totalDelivery}</td>
+                      <td className="px-6 py-4 text-center">{creditRelation.totalInterest}</td>
+                      <td className="px-6 py-4 text-center">{creditRelation.capital}</td>
+                      <td className="px-6 py-4 text-center">
+                        <Link
+                          href={`credit-request/${creditRelation.creditRequestId}`}
+                          className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                          Más información
+                        </Link>
+                      </td>
                     </tr>
                   ))
             }
           </tbody>
         </table>
-        <div className="flex justify-end pr-4 pt-4">
-          Monto total entregado: ${totalAmount}
-        </div>
         <nav
           className="flex items-center justify-between"
           aria-label="Table navigation"
