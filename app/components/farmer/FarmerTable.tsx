@@ -9,9 +9,15 @@ import DeleteFarmerModal from "./DeleteFarmerModal"
 import FarmerTableSkeleton from "./FarmerTableSkeleton"
 import { listFarmerService } from "@/services/farmer.service"
 import { listProjectBySectorService } from "@/services/project.service"
+import { getAllSectors } from "@/services/sector.service";
 
 export default function FarmerTable() {
   const router = useRouter()
+  const [sectors, setSectors] = useState<{
+    sectorId: number
+    sectorDescription: string
+  }[]>([])
+
   const [farmers, setFarmers] = useState<{
     farmerId: string
     farmerQualityDescription: string
@@ -61,6 +67,11 @@ export default function FarmerTable() {
 
   useEffect(() => {
     setIsLoadding(true)
+
+    getAllSectors()
+      .then(sectors => setSectors(sectors))
+      .catch(error => console.log(error.message))
+
     listFarmerService({
       searchType: filters.searchType,
       farmerId: filters.farmerId,
@@ -213,9 +224,11 @@ export default function FarmerTable() {
           </select>
           <select name="campaignTypeId" onChange={changeProjectsBySectorHandler} className="w-40 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             <option value="">Elegir sector</option>
-            <option value="2">Margen derecha - 2</option>
-            <option value="3">Tumbes - 3</option>
-            <option value="4">Margen izquierda - 4</option>
+            {
+              sectors.map(sector => (
+                <option key={sector.sectorId} value={sector.sectorId}>{sector.sectorDescription} - {sector.sectorId}</option>
+              ))
+            }
           </select>
           <select name="campaignTypeId" onChange={handlerChangeSetProject} className="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             <option value="">Elegir proyecto</option>

@@ -1,52 +1,43 @@
 "use client";
 
-import { listAllProjectService } from "@/services/project.service"
 import { Button } from "flowbite-react"
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
-import ProjectTableSkeleton from "./ProjectTableSkeleton"
-import CreateProjectModal from "./CreateProjectModal"
-import DeleteProjectModal from "./DeleteProjectModal";
-import { getAllSectors } from "@/services/sector.service";
+import ProjectTableSkeleton from "./SectorTableSkeleton"
+import CreateSectorModal from "./CreateSectorModal";
+import DeleteSectorModal from "./DeleteSectorModal";
+import { listAllSectorsService } from "@/services/sector.service";
 
-export default function ProjectTable () {
-  const [sectors, setSectors] = useState<{
+export default function SectorTable () {
+
+  const [sectorList, setSectorList] = useState<{
     sectorId: number
-    sectorDescription: string
-  }[]>([])
-
-  const [projectList, setProjectList] = useState<{
-    projectId: number
-    projectDescription: string
     sectorDescription: string
   }[]>([])
   
   const [filters, setFilters] = useState<{
-    sectorId: number, 
-    projectDescription: string, 
+    sectorDescription: string, 
     page: number, 
     limit: number, 
     typeSearch: 'all' | 'sector' | 'name' | 'both'
   }>({
-    sectorId: 0, 
-    projectDescription: '', 
+    sectorDescription: '', 
     page: 1, 
     limit: 7, 
     typeSearch: 'all'
   })
 
-  const [projectDeleted, setProjectDeleted] = useState<{
-    projectId: number
-    projectDescription: string
+  const [sectorDeleted, setSectorDeleted] = useState<{
+    sectorId: number
+    sectorDescription: string
   }>({
-    projectId: 0,
-    projectDescription: ''
+    sectorId: 0,
+    sectorDescription: ''
   })
 
   const [paginationSelected, setPaginationSelected] = useState(1)
   const [paginationNumbers, setPaginationNumbers] = useState<number[]>([1,2,3,4,5])
   const [totalNumberOfCampaigns, setTotalNumberOfCampaigns] = useState(0)
   const [inputSearchFilter, setInputSearchFilter] = useState('')
-  const [sectorIdValue, setSectorIdValue] = useState(0)
   const [isLoadding, setIsLoadding] = useState(true)
   const [modalFormIsOpen, setModalFormIsOpen] = useState(false);
   const [modalDeleteCampaignIsOpen, setModalDeleteCampaignIsOpen] = useState(false);
@@ -56,70 +47,41 @@ export default function ProjectTable () {
 
   useEffect(() => {
     setIsLoadding(true)
-    getAllSectors()
-      .then(sectors => setSectors(sectors))
-      .catch(error => console.log(error.message))
-    listAllProjectService({
-      sectorId: filters.sectorId,
-      projectDescription: filters.projectDescription,
+    listAllSectorsService({
+      sectorDescription: filters.sectorDescription,
       page: filters.page,
       limit: filters.limit,
       typeSearch: filters.typeSearch
     })
     .then(response => {
-      console.log(response.projectList)
-      setProjectList(response.projectList)
+      console.log(response.sectorList)
+      setSectorList(response.sectorList)
       setTotalNumberOfCampaigns(response.count)
       setIsLoadding(false)
     })
     .catch(error => console.log(error.message))
   }, [filters])
 
-  const updateSectors = () => {
-    getAllSectors()
-      .then(sectors => setSectors(sectors))
-      .catch(error => console.log(error.message))
-  }
-
   const handlerSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if(inputSearchFilter === '' && sectorIdValue === 0){
+    if(inputSearchFilter === ''){
       setFilters({... filters, typeSearch: 'all', page: 1})
       setPaginationSelected(1)
-    } else if(sectorIdValue === 0 && inputSearchFilter !== ''){
-      setFilters({... filters, projectDescription: inputSearchFilter, typeSearch: 'name', page: 1})
+    } else if(inputSearchFilter !== ''){
+      setFilters({... filters, sectorDescription: inputSearchFilter, typeSearch: 'name', page: 1})
       setPaginationSelected(1)
-    }else if(inputSearchFilter === '' && sectorIdValue !== 0){
-      setFilters({... filters, sectorId: sectorIdValue, typeSearch: 'sector', page: 1})
+    }else if(inputSearchFilter === ''){
+      setFilters({... filters, typeSearch: 'sector', page: 1})
       setPaginationSelected(1)
     }else {
-      setFilters({... filters, projectDescription: inputSearchFilter, sectorId: sectorIdValue, typeSearch: 'both', page: 1})
+      setFilters({... filters, sectorDescription: inputSearchFilter, typeSearch: 'both', page: 1})
       setPaginationSelected(1)
     }
   }
 
   const handlerChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputSearchFilter(event.target.value)
-  }
-
-  const changeProjectBySection = (event: ChangeEvent<HTMLSelectElement>) => {
-    const sectorId: number = Number(event.target.value)
-    setSectorIdValue(sectorId)
-
-    if(inputSearchFilter === '' && sectorId === 0){
-      setFilters({... filters, typeSearch: 'all', page: 1})
-      setPaginationSelected(1)
-    } else if(sectorId === 0 && inputSearchFilter !== ''){
-      setFilters({... filters, projectDescription: inputSearchFilter, typeSearch: 'name', page: 1})
-      setPaginationSelected(1)
-    }else if(inputSearchFilter === '' && sectorId !== 0){
-      setFilters({... filters, sectorId: sectorId, typeSearch: 'sector', page: 1})
-      setPaginationSelected(1)
-    }else {
-      setFilters({... filters, projectDescription: inputSearchFilter, sectorId: sectorId, typeSearch: 'both', page: 1})
-      setPaginationSelected(1)
-    }
   }
 
   const returnPreviosPage = () => {
@@ -150,19 +112,17 @@ export default function ProjectTable () {
 
   return (
     <>
-      <CreateProjectModal 
+      <CreateSectorModal 
         modalFormIsOpen={modalFormIsOpen} 
         setModalFormIsOpen={setModalFormIsOpen}
         setFilters={setFilters}
-        setSectorIdValue={setSectorIdValue}
         setPaginationSelected={setPaginationSelected}
         setPaginationNumbers={setPaginationNumbers}
       />
-      <DeleteProjectModal 
+      <DeleteSectorModal 
         modalDeleteCampaignIsOpen={modalDeleteCampaignIsOpen} 
         setModalDeleteCampaignIsOpen={setModalDeleteCampaignIsOpen} 
-        projectDeleted={projectDeleted}
-        setSectorIdValue={setSectorIdValue}
+        sectorDeleted={sectorDeleted}
         setFilters={setFilters} 
         setPaginationSelected={setPaginationSelected}
         setPaginationNumbers={setPaginationNumbers}
@@ -173,24 +133,10 @@ export default function ProjectTable () {
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
             onClick={() => setModalFormIsOpen(true)}
           >
-            Crear proyecto
+            Crear sector
           </Button>
 
           <label className="sr-only">Buscar</label>
-          <select onChange={changeProjectBySection} value={sectorIdValue} className="mr-2bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-            <option value="0">Elegir sector</option>
-            {
-              sectors.map(sector => (
-                <option key={sector.sectorId} value={sector.sectorId}>{sector.sectorDescription} - {sector.sectorId}</option>
-              ))
-            }
-          </select>
-          <Button
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-            onClick={updateSectors}
-          >
-            Actualizar
-          </Button>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
@@ -213,7 +159,7 @@ export default function ProjectTable () {
                   type="text"
                   id="table-search"
                   className="mr-4 block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Buscar proyecto por nombre"
+                  placeholder="Buscar sector por nombre"
                   onChange={handlerChange}
                 />
                 <Button
@@ -236,9 +182,6 @@ export default function ProjectTable () {
                 Descripción
               </th>
               <th scope="col" className="px-6 py-3">
-                Sector
-              </th>
-              <th scope="col" className="px-6 py-3">
                 Eliminar
               </th>
             </tr>
@@ -255,20 +198,19 @@ export default function ProjectTable () {
                       No se encontraron resultados.
                   </div>
                 :
-                  projectList.map(response => (
-                    <tr key={response.projectId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                  sectorList.map(sector => (
+                    <tr key={sector.sectorId} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
-                        {response.projectId}
+                        {sector.sectorId}
                       </th>
-                      <td className="px-6 py-4">{response.projectDescription}</td>
-                      <td className="px-6 py-4">{response.sectorDescription}</td>
+                      <td className="px-6 py-4">{sector.sectorDescription}</td>
                       <td className="px-6 py-4">
                         <button 
                           className="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" 
-                          onClick={() => {setModalDeleteCampaignIsOpen(true), setProjectDeleted({projectId: response.projectId, projectDescription: response.projectDescription})}}
+                          onClick={() => {setModalDeleteCampaignIsOpen(true), setSectorDeleted({sectorId: sector.sectorId, sectorDescription: sector.sectorDescription})}}
                         >
                           Eliminar
                         </button>
