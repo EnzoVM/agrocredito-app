@@ -1,63 +1,41 @@
-import { createCampaignService } from "@/services/campaign.service";
-import { listCampaignTypeService } from "@/services/campaign.type.service";
-import { createProjectService } from "@/services/project.service";
-import { getAllSectors } from "@/services/sector.service";
+import { createSectorService } from "@/services/sector.service";
 import { Button, Modal } from "flowbite-react";
 import React, { Dispatch, SetStateAction } from "react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 
 interface Props {
   modalFormIsOpen: boolean
   setModalFormIsOpen: (modalFormIsOpen: boolean) => void
   setPaginationSelected: Dispatch<SetStateAction<number>>
   setFilters: Dispatch<SetStateAction<{
-    sectorId: number;
-    projectDescription: string;
+    sectorDescription: string;
     page: number;
     limit: number;
     typeSearch: 'all' | 'sector' | 'name' | 'both'
   }>>
   setPaginationNumbers: Dispatch<SetStateAction<number[]>>
-  setSectorIdValue: Dispatch<SetStateAction<number>>
 }
 
-export default function CreateProjectModal ({ 
+export default function CreateSectorModal ({ 
   modalFormIsOpen, 
   setModalFormIsOpen, 
   setPaginationSelected, 
   setFilters, 
-  setPaginationNumbers,
-  setSectorIdValue
+  setPaginationNumbers
 }: Props) {
 
   const [authFailed, setAuthFailed] = useState('')
-  const sectorIdValue = React.useRef(null)
-  const projectDescriptionValue = React.useRef(null)
-
-  const [sectors, setSectors] = useState<{
-    sectorId: number
-    sectorDescription: string
-  }[]>([])
-
-  useEffect(() => {
-    getAllSectors()
-      .then(sectors => setSectors(sectors))
-      .catch(error => console.log(error.message))
-  }, [])
+  const sectorDescriptionValue = React.useRef(null)
 
   const clearInputFields = () => {
     //@ts-ignore
-    sectorIdValue.current.value=0
-    //@ts-ignore
-    projectDescriptionValue.current.value=''
+    sectorDescriptionValue.current.value=''
   }
 
   const getValueInputs = () => {
     return {
       //@ts-ignore
-      sectorId: sectorIdValue.current?.value,
-      //@ts-ignore
-      projectDescription: projectDescriptionValue.current?.value
+      sectorDescription: sectorDescriptionValue.current?.value
     }
   }
 
@@ -70,18 +48,16 @@ export default function CreateProjectModal ({
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setAuthFailed('')
-    const projectData = getValueInputs()
+    const sectorData = getValueInputs()
     
-    createProjectService({
-      projectDescription: String(projectData.projectDescription),
-      sectorId: Number(projectData.sectorId)
+    createSectorService({
+      sectorDescription: String(sectorData.sectorDescription)
     })
     .then(response => {
       console.log(response)
       clearInputFields()
       setFilters({
-        sectorId: 0, 
-        projectDescription: '', 
+        sectorDescription: '', 
         page: 1, 
         limit: 8, 
         typeSearch: 'all'
@@ -89,7 +65,6 @@ export default function CreateProjectModal ({
       setPaginationSelected(1)
       setPaginationNumbers([1,2,3,4,5])
       setModalFormIsOpen(false)
-      setSectorIdValue(0)
     })
     .catch(error => {
       console.log(error.message)
@@ -101,7 +76,7 @@ export default function CreateProjectModal ({
     <Modal show={modalFormIsOpen} onClose={() => handleCancel()}>
       <form onSubmit={handleSubmit}>
         <Modal.Header className="border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800">
-          Creación de un nuevo Proyecto
+          Creación de un nuevo sector
         </Modal.Header>
         <Modal.Body className="border-b border-gray-200 dark:border-gray-700 dark:bg-gray-800" >
         {
@@ -116,24 +91,13 @@ export default function CreateProjectModal ({
             : <></>
         }
           <div className="flex justify-between">  
-            <div className="w-full mr-4">
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sector:</label>
-              <select name="campaignTypeId" ref={sectorIdValue} className="w-full mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-              <option value="0">Elegir sector</option>
-              {
-                sectors.map(sector => (
-                  <option key={sector.sectorId} value={sector.sectorId}>{sector.sectorDescription} - {sector.sectorId}</option>
-                ))
-              }
-              </select>
-            </div>
             <div className="w-full">
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre del Proyecto:</label>
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre del sector:</label>
               <input
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                placeholder="Ingrese el nombre del proyecto"
-                ref={projectDescriptionValue}
+                placeholder="Ingrese el nombre del sector"
+                ref={sectorDescriptionValue}
                 required
               />
             </div>
@@ -144,7 +108,7 @@ export default function CreateProjectModal ({
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
             type="submit"
           >
-            Crear proyecto
+            Crear sector
           </Button>
           <Button
             className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
