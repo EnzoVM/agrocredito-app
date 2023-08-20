@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, ChangeEvent, FormEvent} from "react"
 import { Button } from "flowbite-react"
 import DeliveryTableSkeleton from "./DeliveryTableSkeleton"
-import moment from 'moment'
+import moment from 'moment-timezone'
 import 'moment/locale/es'
 import { listDeliveriesService } from "@/services/delivery.service"
 import DeliveryGeneralReportGenerator from "./DeliveryGeneralReportGenerator"
@@ -245,7 +245,7 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                         {delivery.deliveryId}
                       </th>
                       <td className="px-6 py-4 text-center">{delivery.fullNames ? delivery.fullNames : delivery.socialReason}</td>
-                      <td className="px-6 py-4 text-center">{moment(delivery.deliveryDateTime).format('LL')}</td>
+                      <td className="px-6 py-4 text-center">{moment(delivery.deliveryDateTime).tz('America/Lima').format('LL')}</td>
                       <td className="px-6 py-4 text-center">{delivery.providerDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.financialSourceDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.currentAccountDescription}</td>
