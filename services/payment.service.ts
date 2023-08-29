@@ -67,7 +67,7 @@ export async function createPaymentsService ({
   financialSourceId,
   currentAccountId,
   paymentDescription,
-  paymentAmountPEN,
+  paymentAmountUSD,
   exchangeRate
 }:{
   creditRequestId: string
@@ -75,7 +75,7 @@ export async function createPaymentsService ({
   financialSourceId: number
   currentAccountId: number
   paymentDescription: string
-  paymentAmountPEN: number
+  paymentAmountUSD: number
   exchangeRate: number
 }): Promise<string> {
   try {
@@ -92,7 +92,7 @@ export async function createPaymentsService ({
       financialSourceId,
       currentAccountId,
       paymentDescription,
-      paymentAmountPEN,
+      paymentAmountUSD,
       exchangeRate
     }, {
       headers: {
