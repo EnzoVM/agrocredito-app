@@ -31,7 +31,7 @@ export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId
     financialSourceId: number
     currentAccountId: number
     paymentDescription: string
-    paymentAmountPEN: number
+    paymentAmountUSD: number
     exchangeRate: number
   }>({
     creditRequestId: '',
@@ -39,7 +39,7 @@ export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId
     financialSourceId: 0,
     currentAccountId: 0,
     paymentDescription: '',
-    paymentAmountPEN: 0,
+    paymentAmountUSD: 0,
     exchangeRate: 0
   })
 
@@ -47,8 +47,8 @@ export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId
   const [modalErrorMessageIsOpen, setModalErrorMessageIsOpen] = useState(false)
   const [farmer, setFarmer] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-  const [paymentAmountUSD, setPaymentAmountUSD] = useState('')
-  const [paymentAmountPEN, setPaymentAmountPEN] = useState(0)
+  const [paymentAmountUSD, setPaymentAmountUSD] = useState(0)
+  const [paymentAmountPEN, setPaymentAmountPEN] = useState('')
   const [exchangeRateValue, setExchangeRateValue] = useState(0)
   
   useEffect(() => {
@@ -84,27 +84,27 @@ export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId
     }
   }
   
-  const handleSetAmountPEN = (event: ChangeEvent<HTMLInputElement>) => {
-    const amountPEN: number = Number(event.target.value)
-    setPaymentAmountPEN(amountPEN)
+  const handleSetAmountUSD = (event: ChangeEvent<HTMLInputElement>) => {
+    const amountUSD: number = Number(event.target.value)
+    setPaymentAmountUSD(amountUSD)
     
-    let amountUSD: number = 0
+    let amountPEN: number = 0
     if(exchangeRateValue !== 0){
-      amountUSD = amountPEN/exchangeRateValue
+      amountPEN = amountUSD*exchangeRateValue
     }
-    setPaymentAmountUSD(amountUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD'}))
-    setPayment({... payment, paymentAmountPEN: amountPEN})
+    setPaymentAmountPEN(amountPEN.toLocaleString('es-PE', { style: 'currency', currency: 'PEN' }))
+    setPayment({... payment, paymentAmountUSD: amountUSD})
   }
 
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
     const exchangeRate: number = Number(event.target.value)
     setExchangeRateValue(exchangeRate)
     
-    let amountUSD: number = 0
+    let amountPEN: number = 0
     if(exchangeRate !== 0){
-      amountUSD = paymentAmountPEN/exchangeRate
+      amountPEN = paymentAmountUSD*exchangeRate
     }
-    setPaymentAmountUSD(amountUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD'})) 
+    setPaymentAmountPEN(amountPEN.toLocaleString('es-PE', { style: 'currency', currency: 'PEN' })) 
     setPayment({... payment, exchangeRate})
   }
   
@@ -173,12 +173,12 @@ export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId
               </div>
               <div className="flex justify-between">   
                 <div className="mb-6 w-full mr-4">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en soles (S/):</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en dolares ($/):</label>
                   <input
                     type="number"
                     placeholder="Monto de la entrega en soles" 
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    onChange={handleSetAmountPEN}
+                    onChange={handleSetAmountUSD}
                     step="0.01"
                     required
                   />
@@ -197,12 +197,12 @@ export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId
               </div>
               <div className="flex justify-between"> 
                 <div className="mb-6 w-full mr-4">
-                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en dolares ($/):</label>
+                  <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Monto en soles (S/): </label>
                   <input
                     type="text"
                     placeholder="Monto de la entrega en dolares"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 cursor-not-allowed focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                    value={paymentAmountUSD}
+                    value={paymentAmountPEN}
                     required
                     disabled
                   />
