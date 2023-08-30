@@ -67,7 +67,8 @@ export default function CreditRelationGenenalDocument ({ creditRelations, campai
     fullNames?: string
     socialReason?: string
     totalDelivery: number
-    totalInterest: number
+    interest: number
+    delinquentInterest: number
     capital: number
   }[], 
   campaignId: string
@@ -94,7 +95,10 @@ export default function CreditRelationGenenalDocument ({ creditRelations, campai
                   <Text style={styles.tableCell}>Saldo capital:</Text> 
                 </View>
                 <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>Saldo interés:</Text>
+                  <Text style={styles.tableCell}>Interés general:</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>Interés moratorio:</Text>
                 </View>
                 <View style={styles.tableCol}>
                   <Text style={styles.tableCell}>Saldo:</Text>
@@ -113,7 +117,10 @@ export default function CreditRelationGenenalDocument ({ creditRelations, campai
                       <Text style={styles.tableCell}>{creditRelation.totalDelivery}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRelation.totalInterest}</Text> 
+                      <Text style={styles.tableCell}>{creditRelation.interest}</Text> 
+                    </View>
+                    <View style={styles.tableCol}> 
+                      <Text style={styles.tableCell}>{creditRelation.delinquentInterest}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
                       <Text style={styles.tableCell}>{creditRelation.capital}</Text> 

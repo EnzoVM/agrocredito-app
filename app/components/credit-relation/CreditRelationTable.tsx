@@ -17,7 +17,8 @@ export default function CreditRelationTable({ campaignId }: { campaignId: string
     fullNames?: string
     socialReason?: string
     totalDelivery: number
-    totalInterest: number
+    interest: number
+    delinquentInterest: number
     capital: number
   }[]>([])
 
@@ -201,7 +202,10 @@ export default function CreditRelationTable({ campaignId }: { campaignId: string
                 SALDO CAPITAL
               </th>
               <th scope="col" className="px-6 py-3 text-center">
-                SALDO INTERES
+                INTERES GENERAL
+              </th>
+              <th scope="col" className="px-6 py-3 text-center">
+                INTERES MORATORIO
               </th>
               <th scope="col" className="px-6 py-3 text-center">
                 SALDO
@@ -233,7 +237,8 @@ export default function CreditRelationTable({ campaignId }: { campaignId: string
                       </th>
                       <td className="px-6 py-4 text-center">{creditRelation.fullNames ? creditRelation.fullNames : creditRelation.socialReason}</td>
                       <td className="px-6 py-4 text-center">{creditRelation.totalDelivery}</td>
-                      <td className="px-6 py-4 text-center">{creditRelation.totalInterest}</td>
+                      <td className="px-6 py-4 text-center">{creditRelation.interest}</td>
+                      <td className="px-6 py-4 text-center">{creditRelation.delinquentInterest}</td>
                       <td className="px-6 py-4 text-center">{creditRelation.capital}</td>
                       <td className="px-6 py-4 text-center">
                         <Link

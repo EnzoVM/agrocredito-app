@@ -3,15 +3,16 @@ import { checkAuthorization } from './check.authorization.service'
 import { createLogRecord, setEndRequestTimeByLogRecordId } from './log.record.service'
 
 export interface AccountStatusModel {
-  campaignFinishDate: '',
-  amountDelivered: 0,
-  amountDeliveredPercentage: 0,
-  creditAmount: 0,
-  delinquentInterest: 0,
-  delinquentInterestPercentage: 0,
-  finalDebt: 0,
-  interest: 0,
-  interesPercentage: 0,
+  campaignFinishDate: string,
+  amountDelivered: number,
+  amountDeliveredPercentage: number,
+  creditAmount: number,
+  delinquentInterest: number,
+  delinquentInterestPercentage: number,
+  finalDebt: number,
+  interest: number,
+  interesPercentage: number,
+  capital: number
   payments: {
     transactionDateTime: Date,
     paymentAmount: number
@@ -19,7 +20,7 @@ export interface AccountStatusModel {
   deliveries: {
     deliveryDateTime: Date, deliveryAmount: number
   }[],
-  totalPayment: 0,
+  totalPayment: number,
   farmerData: {
     farmerId: string,
     fullName?: string,

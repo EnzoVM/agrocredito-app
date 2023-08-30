@@ -22,7 +22,8 @@ export async function listCreditRelationsService ({
       fullNames?: string
       socialReason?: string
       totalDelivery: number
-      totalInterest: number
+      interest: number
+      delinquentInterest: number
       capital: number
     }[], 
     count: number
