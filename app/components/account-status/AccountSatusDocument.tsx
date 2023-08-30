@@ -67,15 +67,16 @@ const styles = StyleSheet.create({
 });
 
 export default function AccountStatusDocument ({ accountStatus }: { accountStatus: {
-  campaignFinishDate: '',
-  amountDelivered: 0,
-  amountDeliveredPercentage: 0,
-  creditAmount: 0,
-  delinquentInterest: 0,
-  delinquentInterestPercentage: 0,
-  finalDebt: 0,
-  interest: 0,
-  interesPercentage: 0,
+  campaignFinishDate: string,
+  amountDelivered: number,
+  amountDeliveredPercentage: number,
+  creditAmount: number,
+  delinquentInterest: number,
+  delinquentInterestPercentage: number,
+  finalDebt: number,
+  interest: number,
+  interesPercentage: number,
+  capital: number
   payments: {
     transactionDateTime: Date,
     paymentAmount: number
@@ -83,10 +84,10 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
   deliveries: {
     deliveryDateTime: Date, deliveryAmount: number
   }[],
-  totalPayment: 0,
+  totalPayment: number,
   farmerData: {
     farmerId: string,
-    fullNames?: string,
+    fullName?: string,
     socialReason?: string,
   }
   campaignId: string,
@@ -99,7 +100,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
     <Page style={styles.body}>
       <Text style={styles.textLogo}>AgroCredito PEBPT</Text>
       <Text style={styles.text}>Reporte de estado de cuenta</Text>
-      <Text style={styles.textTerceriary}>Estado de cuenta de la solicitud de credito {accountStatus.creditRequesId}, perteneciente al agricultor {accountStatus.farmerData.farmerId} - {accountStatus.farmerData.fullNames || accountStatus.farmerData.socialReason} para la campaña {accountStatus.campaignId}</Text>
+      <Text style={styles.textTerceriary}>Estado de cuenta de la solicitud de credito {accountStatus.creditRequesId}, perteneciente al agricultor {accountStatus.farmerData.farmerId} - {accountStatus.farmerData.fullName || accountStatus.farmerData.socialReason} para la campaña {accountStatus.campaignId}</Text>
       <Text style={styles.textSecondary}>Detalle del estado de cuenta:</Text>
       <View style={styles.table}>
         <View style={styles.tableRow}>
@@ -117,6 +118,14 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
           <View style={styles.tableCol}>
             <Text style={styles.tableCell}>${accountStatus.creditAmount}</Text>
           </View> 
+        </View>
+        <View  style={styles.tableRow}> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>Saldo capital:</Text> 
+          </View> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>${accountStatus.capital}</Text> 
+          </View>
         </View>
         <View  style={styles.tableRow}> 
           <View style={styles.tableCol}> 

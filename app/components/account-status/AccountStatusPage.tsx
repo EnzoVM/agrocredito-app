@@ -15,6 +15,7 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
     delinquentInterestPercentage: 0,
     finalDebt: 0,
     interest: 0,
+    capital: 0,
     interesPercentage: 0,
     payments: [],
     deliveries: [],
@@ -65,6 +66,10 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
                   <div className="flex justify-between px-6 pt-4 pb-2">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Total de crédito aprobado:</p>
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.creditAmount}</p>
+                  </div>
+                  <div className="flex justify-between px-6 py-2">
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">Saldo capital:</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.capital}</p>
                   </div>
                   <div className="flex justify-between px-6 py-2">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés ({accountStateData.interesPercentage}%):</p>
