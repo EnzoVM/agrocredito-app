@@ -22,6 +22,7 @@ export default function AccountSatusReportGenerator ({ creditRequestId }: { cred
     delinquentInterest: 0,
     delinquentInterestPercentage: 0,
     finalDebt: 0,
+    capital: 0,
     interest: 0,
     interesPercentage: 0,
     payments: [],
