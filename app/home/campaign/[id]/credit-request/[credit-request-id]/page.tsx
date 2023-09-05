@@ -101,7 +101,11 @@ export default function CreditRequestDetail ({ params }: { params: { 'credit-req
                 <div className="block w-1/2 mr-2 p-6 bg-white border border-gray-700 rounded-lg dark:bg-gray-800">
                   <div className="flex justify-between mb-4">
                     <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Datos de la solicitud:</h5>
-                    <button type="button" onClick={handleEditCreditRequesStatus} className="px-3 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{editable ? 'Guardar' : 'Editar'}</button>
+                    {
+                      creditRequestDetail.creditRequestStatus === 'Pagado'
+                        ? <></>
+                        : <button type="button" onClick={handleEditCreditRequesStatus} className="px-3 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{editable ? 'Guardar' : 'Editar'}</button>
+                    }
                   </div>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Estado de la solicitud:</p>
                   {
