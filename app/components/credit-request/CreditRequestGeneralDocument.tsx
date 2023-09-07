@@ -111,7 +111,7 @@ export default function CreditRequestGenenalDocument ({ creditRequests, campaign
                       <Text style={styles.tableCell}>{creditRequest.fullNames || creditRequest.socialReason}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>${creditRequest.creditAmount}</Text> 
+                      <Text style={styles.tableCell}>{(creditRequest.creditAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
                       <Text style={styles.tableCell}>{moment(creditRequest.createDateTime).format('LLLL')}</Text> 

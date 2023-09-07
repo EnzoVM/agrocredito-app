@@ -118,7 +118,7 @@ export default function CreditRequestDocument ({ creditRequestData }: { creditRe
               <Text style={styles.tableCell}>Monto del crédito:</Text> 
             </View> 
             <View style={styles.tableCol}> 
-              <Text style={styles.tableCell}>${creditRequestData.creditAmount}</Text> 
+              <Text style={styles.tableCell}>{(creditRequestData.creditAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
             </View>
           </View>
           <View style={styles.tableRow}> 
@@ -142,7 +142,7 @@ export default function CreditRequestDocument ({ creditRequestData }: { creditRe
               <Text style={styles.tableCell}>Valor de la garantía:</Text> 
             </View> 
             <View style={styles.tableCol}> 
-              <Text style={styles.tableCell}>${creditRequestData.guaranteeAmount}</Text> 
+              <Text style={styles.tableCell}>{(creditRequestData.guaranteeAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
             </View>
           </View>
           <View style={styles.tableRow}> 

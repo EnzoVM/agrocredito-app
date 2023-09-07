@@ -137,7 +137,7 @@ export default function DeliveryGenenalDocument ({ deliveries, campaignId }: { d
                       <Text style={styles.tableCell}>{delivery.gloss}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>${delivery.deliveryAmount}</Text> 
+                      <Text style={styles.tableCell}>{(delivery.deliveryAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
                     </View>
                   </View>
                 ))

@@ -1,6 +1,4 @@
 'use client'
-
-import CreditRequestGeneralReportGenerator from "@/app/components/credit-request/CreditRequestGeneralReportGenerator";
 import CreditRequestTable from "@/app/components/credit-request/CreditRequestTable";
 import CreateCreditRequest from "@/app/components/credit-request/CreateCreditRequest";
 import { useEffect, useState } from "react";
@@ -96,7 +94,7 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       {toggleCreate ? (
         <CreateCreditRequest campaignId={params.id} setToggleCreate={setToggleCreate} recordId={recordId}/>
       ) : (
-        <><CreditRequestGeneralReportGenerator campaignId={params.id} /> <CreditRequestTable campaignId={params.id}/></>
+        <CreditRequestTable campaignId={params.id}/>
       )}
     </div>
   )
