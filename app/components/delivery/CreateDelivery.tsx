@@ -191,7 +191,7 @@ export default function CreateDelivery ({campaignId, setToggleCreate}:{campaignI
                     <option value="">Elegir tipo</option>
                     {
                       creditRequestApprovedList.map(creditApproved => (
-                        <option key={creditApproved.creditRequestId} value={creditApproved.creditRequestId} data-value2={creditApproved.creditAmount}>Credito - $/{creditApproved.creditAmount} - {moment(creditApproved.createDateTime).format('LLLL')}</option>
+                        <option key={creditApproved.creditRequestId} value={creditApproved.creditRequestId} data-value2={creditApproved.creditAmount}>Credito - {(creditApproved.creditAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })} - {moment(creditApproved.createDateTime).format('LLLL')}</option>
                       ))
                     }
                   </select>

@@ -250,14 +250,14 @@ export default function DeliveryTable({ campaignId }: { campaignId: string }) {
                       <td className="px-6 py-4 text-center">{delivery.financialSourceDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.currentAccountDescription}</td>
                       <td className="px-6 py-4 text-center">{delivery.gloss}</td>
-                      <td className="px-6 py-4 text-center">${delivery.deliveryAmount}</td>
+                      <td className="px-6 py-4 text-center">{(delivery.deliveryAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</td>
                     </tr>
                   ))
             }
           </tbody>
         </table>
         <div className="flex justify-end pr-4 pt-4">
-          Monto total entregado: ${totalAmount}
+          Monto total entregado: {(totalAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}
         </div>
         <nav
           className="flex items-center justify-between"

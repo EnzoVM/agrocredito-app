@@ -151,11 +151,11 @@ export default function CreditRequestDetail ({ params }: { params: { 'credit-req
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Razón del crédito:</p>
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.creditReason}</p>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Monto del crédito:</p>
-                  <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.creditAmount}</p>
+                  <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{(creditRequestDetail.creditAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Garantía:</p>
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.guaranteeDescription}</p>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Valor de la garantía:</p>
-                  <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.guaranteeAmount}</p>
+                  <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{(creditRequestDetail.guaranteeAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Tipo de asistencia:</p>
                   <p className="mb-2 font-normal text-gray-700 dark:text-gray-400">{creditRequestDetail.assistanceTypeDescription}</p>
                   <p className="text-md tracking-tight text-gray-900 dark:text-white">Nombre del técnico:</p>

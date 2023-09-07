@@ -45,15 +45,18 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
       campaignId
     }).then(response => {
       setDeliveryPlanModel(response)
-      setIsLoadding(false)
-
+      
       listDepartureDetailService({
         deliveryPlanModelId: response.deliveryPlanModelId
       }).then(response => {
         setListDepartureDetail(response)
         console.log(response)
-        
-      }).catch(error => console.log(error))
+        setIsLoadding(false)
+
+      }).catch(error => {
+        console.log(error)
+        setIsLoadding(false)
+      })
 
     }).catch(error => {
       console.log(error.message);
@@ -190,7 +193,7 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
                           </div>
                           <div className="mb-3 px-2">
                             <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Monto x hectarea:</h5>
-                            <p className="font-normal text-gray-700 dark:text-gray-400">S/. {departure.amountPerHectare}</p>
+                            <p className="font-normal text-gray-700 dark:text-gray-400">{(departure.amountPerHectare).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                           </div>
                         </div>
                       </div>
@@ -236,7 +239,7 @@ export default function DeliveryPlanModelCard ({campaignId}: Props) {
                                 </div>
                                 <div className="mb-3 px-2">
                                   <h5 className="py-1 text-xl tracking-tight text-gray-900 dark:text-white">Monto x hectarea:</h5>
-                                  <p className="font-normal text-gray-700 dark:text-gray-400">S/. {departure.amountPerHectare}</p>
+                                  <p className="font-normal text-gray-700 dark:text-gray-400">{(departure.amountPerHectare).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                                 </div>
                               </div>
                             </div>

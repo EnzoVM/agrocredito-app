@@ -236,10 +236,10 @@ export default function CreditRelationTable({ campaignId }: { campaignId: string
                         {creditRelation.farmerId}
                       </th>
                       <td className="px-6 py-4 text-center">{creditRelation.fullNames ? creditRelation.fullNames : creditRelation.socialReason}</td>
-                      <td className="px-6 py-4 text-center">{creditRelation.totalDelivery}</td>
-                      <td className="px-6 py-4 text-center">{creditRelation.interest}</td>
-                      <td className="px-6 py-4 text-center">{creditRelation.delinquentInterest}</td>
-                      <td className="px-6 py-4 text-center">{creditRelation.capital}</td>
+                      <td className="px-6 py-4 text-center">{(creditRelation.totalDelivery).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</td>
+                      <td className="px-6 py-4 text-center">{(creditRelation.interest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</td>
+                      <td className="px-6 py-4 text-center">{(creditRelation.delinquentInterest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</td>
+                      <td className="px-6 py-4 text-center">{(creditRelation.capital).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</td>
                       <td className="px-6 py-4 text-center">
                         <Link
                           href={`credit-request/${creditRelation.creditRequestId}`}
