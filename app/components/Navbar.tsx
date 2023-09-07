@@ -42,10 +42,18 @@ export default function Navbar () {
           </li>
           <li>
             <Link 
-              href="/home/sector-project"
-              className={path.includes('/home/sector-project') ? selectedButtonclass : unselectedButtonclass}
+              href="/home/sector"
+              className={path.includes('/home/sector') ? selectedButtonclass : unselectedButtonclass}
             >
-              Sectores y Proyectos
+              Sectores
+            </Link>
+          </li>
+          <li>
+            <Link 
+              href="/home/project"
+              className={path.includes('/home/project') ? selectedButtonclass : unselectedButtonclass}
+            >
+              Proyectos
             </Link>
           </li>
         </ul>

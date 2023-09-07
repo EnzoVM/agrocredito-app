@@ -170,7 +170,7 @@ export default function CreateCreditRequest ({
                     <option value="">Elegir partida</option>
                     {
                       departureDetailList.map(departure => (
-                        <option key={departure.departureDetailId} value={departure.amountPerHectare}>Partida - $/ {departure.amountPerHectare}</option>
+                        <option key={departure.departureDetailId} value={departure.amountPerHectare}>Partida - {(departure.amountPerHectare).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</option>
                       ))
                     }
                   </select>
@@ -292,10 +292,16 @@ export default function CreateCreditRequest ({
               <div className="flex justify-between">   
                 <div className="w-full mr-4">
                 <Button
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+                  className="mr-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
                   type="submit"
                 >
                   Crear solicitud de credito
+                </Button>
+                <Button
+                  className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 inline-flex items-center"
+                  onClick={() => setToggleCreate(false)}
+                >
+                  Cancelar
                 </Button>
                 </div>
               </div>

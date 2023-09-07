@@ -53,7 +53,7 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
                 <div className="flex justify-between direction-row">
                   <div className="text-center">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Monto entregado:</p>
-                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.amountDelivered} ({accountStateData.amountDeliveredPercentage}%)</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">{(accountStateData.amountDelivered).toLocaleString('es-US', { style: 'currency', currency: 'USD' })} ({accountStateData.amountDeliveredPercentage}%)</p>
                   </div>
                   <div className="text-center">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Fecha de vencimiento:</p>
@@ -65,29 +65,29 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
                 <div className="dark:bg-gray-600 w-1/2 mr-2 rounded-md">
                   <div className="flex justify-between px-6 pt-4 pb-2">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Total de crédito aprobado:</p>
-                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.creditAmount}</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">{(accountStateData.creditAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                   </div>
                   <div className="flex justify-between px-6 py-2">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Saldo capital:</p>
-                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.capital}</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">{(accountStateData.capital).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                   </div>
                   <div className="flex justify-between px-6 py-2">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés ({accountStateData.interesPercentage}%):</p>
-                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.interest}</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">{(accountStateData.interest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                   </div>
                   <div className="flex justify-between px-6 py-2">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Interés moratorio ({accountStateData.delinquentInterestPercentage}%):</p>
-                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.delinquentInterest}</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">{(accountStateData.delinquentInterest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                   </div>
                   <div className="flex justify-between px-6 py-2">
                     <p className="text-md tracking-tight text-gray-900 dark:text-white">Total abonado:</p>
-                    <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.totalPayment}</p>
+                    <p className="text-md tracking-tight text-gray-900 dark:text-white">{(accountStateData.totalPayment).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                   </div>
                   <div className="grid grid-cols-1 divide-y">
                     <div></div>
                     <div className="flex justify-between px-6 pb-4 pt-2">
                       <p className="text-md tracking-tight text-gray-900 dark:text-white">Deuda actual:</p>
-                      <p className="text-md tracking-tight text-gray-900 dark:text-white">${accountStateData.finalDebt}</p>
+                      <p className="text-md tracking-tight text-gray-900 dark:text-white">{(accountStateData.finalDebt).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</p>
                     </div>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
                             </td>
                             <td className="px-6 py-4">
                               <div className="text-center">
-                                ${delivery.deliveryAmount}
+                                {(delivery.deliveryAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}
                               </div>
                             </td>
                           </tr>
@@ -154,7 +154,7 @@ export default function AccountSatusPage ({ creditRequestId }: { creditRequestId
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-center">
-                            ${payment.paymentAmount}
+                            {(payment.paymentAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}
                           </div>
                         </td>
                       </tr>

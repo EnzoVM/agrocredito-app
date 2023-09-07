@@ -165,7 +165,7 @@ export default function CreatePayment ({campaignId, setToggleCreate}:{campaignId
                     <option value="">Elegir tipo</option>
                     {
                       creditRequestApprovedList.map(creditApproved => (
-                        <option key={creditApproved.creditRequestId} value={creditApproved.creditRequestId}>Credito - $/{creditApproved.creditAmount} - {moment(creditApproved.createDateTime).format('LL')}</option>
+                        <option key={creditApproved.creditRequestId} value={creditApproved.creditRequestId}>Credito - {(creditApproved.creditAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })} - {moment(creditApproved.createDateTime).format('LL')}</option>
                       ))
                     }
                   </select>
