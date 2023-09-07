@@ -1,5 +1,6 @@
 import { createFramerService, listFarmerAttributesServices } from "@/services/farmer.service";
 import { listProjectBySectorService, listProjectService } from "@/services/project.service";
+import { getAllSectors } from "@/services/sector.service";
 import { Button, Modal } from "flowbite-react";
 import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { FormEvent, useEffect, useState } from "react";
@@ -21,6 +22,10 @@ interface Props {
 }
 
 export default function CreateFarmerModal ({ modalFormIsOpen, setModalFormIsOpen, setPaginationSelected, setFilters, setPaginationNumbers}: Props) {
+  const [sectors, setSectors] = useState<{
+    sectorId: number
+    sectorDescription: string
+  }[]>([])
 
   const [projectList, setProjectList] = useState<{
     projectId: string
@@ -93,6 +98,9 @@ export default function CreateFarmerModal ({ modalFormIsOpen, setModalFormIsOpen
       .catch(error => {
         console.log(error.message)
       })
+    getAllSectors()
+      .then(sectors => setSectors(sectors))
+      .catch(error => console.log(error.message))
     listProjectService()
       .then(project => {
         setProjectAddressList(project)
@@ -305,9 +313,11 @@ export default function CreateFarmerModal ({ modalFormIsOpen, setModalFormIsOpen
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sector:</label>
               <select name="propertySectorId" ref={propertySectorIdValue} onChange={changeProjectsBySectorHandler} className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 <option value="">Elegir sector</option>
-                <option value="2">2 - Margen derecha</option>
-                <option value="3">3 - Tumbes</option>
-                <option value="4">4 - Margen izquierda</option>
+                {
+                  sectors.map(sector => (
+                    <option key={sector.sectorId} value={sector.sectorId}>{sector.sectorDescription} - {sector.sectorId}</option>
+                  ))
+                }
               </select>
             </div>
             <div className="mb-6 w-full">
