@@ -3,7 +3,6 @@
 import CreditRequestGeneralReportGenerator from "@/app/components/credit-request/CreditRequestGeneralReportGenerator";
 import CreditRequestTable from "@/app/components/credit-request/CreditRequestTable";
 import CreateCreditRequest from "@/app/components/credit-request/CreateCreditRequest";
-import { Button } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { listDepatureDetailByCampaignIdService } from "@/services/departure.detail.service";
 import ErrorMessageModal from "@/app/components/credit-request/ErrorMessageModal"
@@ -15,6 +14,9 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
   const [modalErrorMessageIsOpen, setModalErrorMessageIsOpen] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [recordId, setRecordId] = useState('')
+
+  const buttonSelected = 'inline-flex items-center px-3 py-2 text-md font-normal text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-800 dark:hover:bg-gray-800 dark:text-white dark:focus:ring-gray-700'
+  const buttonUnselected = 'inline-flex items-center px-3 py-2 text-md font-normal text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800 dark:text-white dark:focus:ring-gray-700'
 
   useEffect(() => {
     listDepatureDetailByCampaignIdService({
@@ -34,7 +36,7 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       setModalErrorMessageIsOpen(true), 
       setToggleCreate(false)
     } else {
-      setToggleCreate(!toggleCreate)
+      setToggleCreate(true)
       const initRequestTime = new Date()
       const { recordId } = await createLogRecord({
         resource: 'create-credit-request',
@@ -52,29 +54,50 @@ export default function CreditRequest ({ params }: { params: { id: string }}) {
       setModalErrorMessageIsOpen={setModalErrorMessageIsOpen}
       errorMessage={errorMessage}
       />
-      <p className="text-2xl font-bold text-gray-100 p-6 text-center">{toggleCreate ? 'Crear una solicitud de credito para la campaña: ': 'Solicitudes de crédito para la campaña: '}{params.id}</p>
-      <div className="flex flex-row">
-        <Button
-          className="text-white mb-6 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
-          onClick={onClickHandle}
-        >
-          {
-            toggleCreate
-              ? 'Cancelar'
-              : 'Crear solicitud de crédito'
-          }
-        </Button>
-        {
-          toggleCreate
-            ? <></>
-            : <CreditRequestGeneralReportGenerator campaignId={params.id} />
-        }
+      <p className="text-2xl font-bold text-gray-100 p-6 text-center">
+        {toggleCreate
+          ? "Crear una solicitud de credito para la campaña: "
+          : "Solicitudes de crédito para la campaña: "}
+        {params.id}
+      </p>
+      <div className="mx-auto flex flex-row">
+        <nav className="flex justify-between mb-6" aria-label="Breadcrumb">
+          <ol className="inline-flex items-center mb-3 sm:mb-0">
+            <li>
+              <div className="flex items-center">
+                <button
+                  id="dropdownProject"
+                  data-dropdown-toggle="dropdown-project"
+                  className={toggleCreate ? buttonUnselected : buttonSelected}
+                  onClick={() => {
+                    setToggleCreate(false);
+                  }}
+                >
+                  Listado de solicitudes
+                </button>
+              </div>
+            </li>
+            <span className="mx-2 text-gray-400">/</span>
+            <li>
+              <div className="flex items-center">
+                <button
+                  id="dropdownProject"
+                  data-dropdown-toggle="dropdown-project"
+                  className={toggleCreate ? buttonSelected : buttonUnselected}
+                  onClick={onClickHandle}
+                >
+                  Crear solicitud
+                </button>
+              </div>
+            </li>
+          </ol>
+        </nav>
       </div>
-      {
-        toggleCreate
-          ? <CreateCreditRequest campaignId={params.id} setToggleCreate={setToggleCreate} recordId={recordId}/>   
-          : <CreditRequestTable campaignId={params.id}/>
-      }
+      {toggleCreate ? (
+        <CreateCreditRequest campaignId={params.id} setToggleCreate={setToggleCreate} recordId={recordId}/>
+      ) : (
+        <><CreditRequestGeneralReportGenerator campaignId={params.id} /> <CreditRequestTable campaignId={params.id}/></>
+      )}
     </div>
   )
 }
