@@ -129,7 +129,7 @@ export default function PaymentGenenalDocument ({ payments, campaignId }: { paym
                       <Text style={styles.tableCell}>{payment.paymentDescription}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>${payment.paymentAmount}</Text> 
+                      <Text style={styles.tableCell}>{(payment.paymentAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
                     </View>
                   </View>
                 ))

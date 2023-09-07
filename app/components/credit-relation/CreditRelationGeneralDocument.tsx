@@ -114,16 +114,16 @@ export default function CreditRelationGenenalDocument ({ creditRelations, campai
                       <Text style={styles.tableCell}>{creditRelation.fullNames || creditRelation.socialReason}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRelation.totalDelivery}</Text> 
+                      <Text style={styles.tableCell}>{(creditRelation.totalDelivery).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRelation.interest}</Text> 
+                      <Text style={styles.tableCell}>{(creditRelation.interest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRelation.delinquentInterest}</Text> 
+                      <Text style={styles.tableCell}>{(creditRelation.delinquentInterest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
                     </View>
                     <View style={styles.tableCol}> 
-                      <Text style={styles.tableCell}>{creditRelation.capital}</Text> 
+                      <Text style={styles.tableCell}>{(creditRelation.capital).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
                     </View>
                   </View>
                 ))

@@ -116,7 +116,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
             <Text style={styles.tableCell}>Total de crédito aprobado:</Text>
           </View> 
           <View style={styles.tableCol}>
-            <Text style={styles.tableCell}>${accountStatus.creditAmount}</Text>
+            <Text style={styles.tableCell}>{(accountStatus.creditAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text>
           </View> 
         </View>
         <View  style={styles.tableRow}> 
@@ -124,7 +124,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
             <Text style={styles.tableCell}>Saldo capital:</Text> 
           </View> 
           <View style={styles.tableCol}> 
-            <Text style={styles.tableCell}>${accountStatus.capital}</Text> 
+            <Text style={styles.tableCell}>{(accountStatus.capital).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
           </View>
         </View>
         <View  style={styles.tableRow}> 
@@ -132,7 +132,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
             <Text style={styles.tableCell}>Interés ({accountStatus.interesPercentage}%):</Text> 
           </View> 
           <View style={styles.tableCol}> 
-            <Text style={styles.tableCell}>${accountStatus.interest}</Text> 
+            <Text style={styles.tableCell}>{(accountStatus.interest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
           </View>
         </View>
         <View  style={styles.tableRow}> 
@@ -140,7 +140,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
             <Text style={styles.tableCell}>Interés moratorio ({accountStatus.delinquentInterestPercentage}%):</Text> 
           </View> 
           <View style={styles.tableCol}> 
-            <Text style={styles.tableCell}>${accountStatus.delinquentInterest}</Text> 
+            <Text style={styles.tableCell}>{(accountStatus.delinquentInterest).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
           </View>
         </View>
         <View  style={styles.tableRow}> 
@@ -148,7 +148,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
             <Text style={styles.tableCell}>Total abonado:</Text> 
           </View> 
           <View style={styles.tableCol}> 
-            <Text style={styles.tableCell}>${accountStatus.totalPayment}</Text> 
+            <Text style={styles.tableCell}>{(accountStatus.totalPayment).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
           </View>
         </View>
         <View  style={styles.tableRow}> 
@@ -156,7 +156,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
             <Text style={styles.tableCell}>Deuda actual:</Text> 
           </View> 
           <View style={styles.tableCol}> 
-            <Text style={styles.tableCell}>${accountStatus.finalDebt}</Text> 
+            <Text style={styles.tableCell}>{(accountStatus.finalDebt).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
           </View>
         </View>
       </View>
@@ -179,7 +179,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
                 <Text style={styles.tableCell}>{moment(delivery.deliveryDateTime).format('LLLL')}</Text> 
               </View> 
               <View style={styles.tableCol}> 
-                <Text style={styles.tableCell}>${delivery.deliveryAmount}</Text> 
+                <Text style={styles.tableCell}>{(delivery.deliveryAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
               </View>
             </View>
           ))
@@ -203,7 +203,7 @@ export default function AccountStatusDocument ({ accountStatus }: { accountStatu
                 <Text style={styles.tableCell}>{moment(payment.transactionDateTime).format('LLLL')}</Text> 
               </View> 
               <View style={styles.tableCol}> 
-                <Text style={styles.tableCell}>${payment.paymentAmount}</Text> 
+                <Text style={styles.tableCell}>{(payment.paymentAmount).toLocaleString('es-US', { style: 'currency', currency: 'USD' })}</Text> 
               </View>
             </View>
           ))

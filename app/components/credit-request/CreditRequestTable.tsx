@@ -9,6 +9,7 @@ import { listCreditRequestService } from "@/services/credit.request.service"
 import moment from 'moment'
 import 'moment/locale/es'
 import CreditRequestReportGenerator from "./CreditRequestReportGenerator"
+import CreditRequestGeneralReportGenerator from "./CreditRequestGeneralReportGenerator";
 
 export default function CreditRequestTable({ campaignId }: { campaignId: string }) {
   const router = useRouter()
@@ -175,6 +176,7 @@ export default function CreditRequestTable({ campaignId }: { campaignId: string 
               <option value="Rechazado">Rechazado</option>
               <option value="Pagado">Pagado</option>
             </select>
+            <CreditRequestGeneralReportGenerator campaignId={campaignId} /> 
           </div>
           <label className="sr-only">Buscar</label>
           <div className="relative">
